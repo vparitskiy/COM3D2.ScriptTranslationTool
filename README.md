@@ -32,3 +32,8 @@ Just start it before this tool.
 ``\backendServer\Program-Backend\Sugoi-Translator-Offline\offlineTranslation\activateOfflineTranslationServer.bat``.  
 **Be warned this will use a LOT of CPU time on your computer (or GPU if you use cuda)**  
 If correctly configure the program will detect it and use it if it can't find a match in any cached data.
+
+## Notes
+- Due to how i18nEx loads translation and how Kiss update their files, I strongly suggest to merge your official to the translation pack.
+- Any line the program can't parse or translate will be reported in Errors.txt
+- Please report any bug you find.
