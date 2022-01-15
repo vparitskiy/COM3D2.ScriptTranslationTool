@@ -1,0 +1,144 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+
+namespace COM3D2.ScriptTranslationTool
+{
+    internal class Script
+    { 
+        /// <summary>
+        /// List Already Translated Script files.
+        /// </summary>
+        internal static Dictionary<string, string> List()
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+
+            if (Directory.Exists(Program.tldScriptFolder))
+            {
+                foreach (string file in Directory.EnumerateFiles(Program.tldScriptFolder))
+                {
+                    string fileName = Path.GetFileName(file);
+                    dict.Add(fileName, file);
+                }
+            }
+
+            return dict;
+        }
+
+        
+        internal static void CreateSortedFolders()
+        {
+            string parentPath = Directory.GetParent(Program.tldScriptFolder).FullName;
+            parentPath = Directory.GetParent(parentPath).FullName;
+
+            if (Directory.Exists(parentPath))
+            {
+                string newPath = $"{parentPath} ({DateTime.Now:dd.mm.yyyy hhmmss})";
+                Directory.Move(Program.tldScriptFolder, newPath);
+            }
+
+
+            // Make folders to sort files in
+            foreach (KeyValuePair<string, string> keyValuePair in SortedFolder.Dict)
+            {
+                Tools.MakeFolder(Path.Combine(Program.tldScriptFolder, keyValuePair.Value));
+            }
+            Tools.MakeFolder(Path.Combine(Program.tldScriptFolder, "[UnCategorized]"));
+        }
+
+        
+        /// <summary>
+        /// Save translated lines to i18nEx sorted scripts.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="jp"></param>
+        /// <param name="eng"></param>
+        internal static void AddTo(Line line)
+        {
+            string savedString = Tools.FormatLine(line.Japanese, line.English);
+            string folder = "[UnCategorized]";
+
+            foreach (KeyValuePair<string, string> kvp in SortedFolder.Dict)
+            {
+                if (line.FileName.StartsWith(kvp.Key))
+                {
+                    folder = kvp.Value;
+                    break;
+                }
+            }
+
+            string path = Path.Combine(Program.tldScriptFolder, folder, line.FileName);
+            File.AppendAllText(path, savedString);
+
+            //Add to translated files list
+            if (!Program.tldScripts.ContainsKey(line.FileName) && Program.exportToi18nEx)
+            {
+                Program.tldScripts.Add(line.FileName, path);
+            }
+        }
+
+
+        internal static void MoveFinished(string file)
+        {
+            string path = file.Substring(file.IndexOf("Japanese"));
+            //path = path.Replace(Program.rawScriptFolder, "");
+            string endPath = Path.Combine(Program.finishedScriptFolder, path);
+            Tools.MakeFolder(Path.GetDirectoryName(endPath));
+
+            try
+            {
+                File.Move(file, endPath);
+            }
+            catch (Exception)
+            {
+                // if the file is left in place it will be ignored next time, not really an issue.
+            }
+        }
+    }
+
+
+    internal static class SortedFolder
+    {
+        internal static Dictionary<string, string> Dict = new Dictionary<string, string>
+        {
+            {"a1_", "Muku"},
+            {"b1_", "Majime"},
+            {"c1_", "Rindere"},
+            {"d1_", "Bookworm"},
+            {"e1_", "Koakuma"},
+            {"f1_", "LadyLike"},
+            {"g1_", "Secretary"},
+            {"h1_", "Imouto"},
+            {"j1_", "Wary"},
+            {"k1_", "Ojousama"},
+            {"l1_", "Osananajime"},
+            {"m1_", "Masochist"},
+            {"n1_", "Haraguro"},
+            {"v1_", "Kimajime"},
+            {"w1_", "Kisakude"},
+            {"a_", "Tsundere"},
+            {"b_", "Kuudere"},
+            {"c_", "Pure"},
+            {"d_", "Yandere"},
+            {"e_", "Onee-chan"},
+            {"f_", "Genki"},
+            {"g_", "Do-S"},
+            {"crc_ck_", "[Commands & Choices]"},
+            {"ck_sex", "[Commands & Choices]"},
+            {"ck_h_", "[Commands & Choices]"},
+            {"ck_dance_", "[Commands & Choices]"},
+            {"ck_cas_", "[Commands & Choices]"},
+            {"lifemode", "[Misc]\\Lifemode"},
+            {"idol", "[Misc]\\Idol"},
+            {"scout", "[Misc]\\Scout"},
+            {"npc", "[Misc]\\NPC"},
+            {"harem", "[Misc]\\Harem"},
+            {"yuri", "[Misc]\\Yuri"},
+            {"pj", "[Misc]\\Pajama Collab"},
+            { "cw", "[Misc]\\Camping Event"},
+            {"rehire", "[Misc]\\Extra Maids rehire"},
+            {"club_gp", "[Misc]\\GP01 Club route"},
+            {"xmas", "[Misc]\\Xmas"}
+        };
+    }
+}
