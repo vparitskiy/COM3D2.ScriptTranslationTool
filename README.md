@@ -42,8 +42,8 @@ Using a dedupe software isn't a bad solution in itself, you just won't be sure w
 **You do not need the translated pack, everything is already included in the tool Cache folder**
 - Extract the Japanese **AND** English scripts from your games.  
 [How to Extract Scripts](https://github.com/ghorsington/COM3D2.i18nEx#extracting-translations-from-the-english-game)
-- Put the Japanese scripts in ``Scripts\Japanese``
-- Put the English scripts in ``Scripts\English``
+- Put the Japanese scripts in ``Scripts\Japanese\``
+- Put the English scripts in ``Scripts\English\``
 - Run the tool, it will start by building an official cache.
 - Wait for it to finish loading (remember dealing with thousands of files takes time) and press any key when asked too.
 - Wait for it to finish and grab your merged script from ``Scripts\i18nEx\``
