@@ -23,7 +23,7 @@ This takes time, be patient!**
 
 ## How to add/edit translations
 
-- Translations are located in the ``Caches`` folde, feel free to edit them as you please.  
+- Translations are located in the ``Caches`` folder, feel free to edit them as you please.  
 Keep in mind that the program will always choose manual translations over official over machine.  
 One line per sentence with this format ``Japanese[tab]English``.
 
@@ -32,6 +32,22 @@ Just start it before this tool.
 ``\backendServer\Program-Backend\Sugoi-Translator-Offline\offlineTranslation\activateOfflineTranslationServer.bat``.  
 **Be warned this will use a LOT of CPU time on your computer (or GPU if you use cuda)**  
 If correctly configure the program will detect it and use it if it can't find a match in any cached data.
+
+## Why merge Machine and Official Translations
+
+Two reasons:
+- First i18nEx only loads one version of each script, so if it will discard any script with a identical name already loaded.  
+As a result you cannot have both machine & official in, as you don't know which one will be picked (and you want the official of course)
+- Second, because of how Kiss manage the game files updates.  
+You see when Kiss fix or update a script (.ks) it doesn't remove the old one, it simply add a new one and the game picks the latest in .arc alphabetical order.
+The script extractor can't do that pick and so extract everything including duplicates; leading to the first issue above where i18nEx will only pick one.
+
+I made a point in this tool to merge all identicaly named scripts in one file, removing that issue for translated script and insurring that you always have a translation available for whaterver version of the script you're on.
+Merging the official script will also enforce that, ensuring the official translation is always used when available.
+I recognize this is an additional step not everyone is going to take, but this is the best solution I came up with.
+
+Using a dedupe software isn't a bad solution in itself, you just won't be sure which script is the most recent one  
+(keeping in mind that the english extracted scripts also have duplicates)
 
 ## Notes
 - Due to how i18nEx loads translation and how Kiss update their files, I strongly suggest to merge your official to the translation pack.
