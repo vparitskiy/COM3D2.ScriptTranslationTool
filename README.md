@@ -16,7 +16,7 @@ It can:
 
 - You need .Net framework 4.8 (you probably already have it if you keep your system updated).  
 - Place your Japanese extracted scripts in ``Scripts\Japanese\``
-- Place (if you have one) your English extracted scripts in ``Scripts\English``
+- Place (if you have one) your English extracted scripts in ``Scripts\English\``
 - Start the program and follow the instructions on screen.  
 **When working with COM3D2 scripts you're dealing with tens of thousands of script files and more than 650.000 translated lines!  
 This takes time, be patient!**
