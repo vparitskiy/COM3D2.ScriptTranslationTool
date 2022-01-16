@@ -7,7 +7,7 @@ It can:
 - Support Official translation and cache for later use.
 - Support manual translation.
 - Support new translation via Sugoi Translator.
-- Reconstruct translate and sort Japanese scripts from cached translations.
+- Reconstruct, translate and sort Japanese scripts from cached translations.
 - Merge Japanese and Official translations.
 - Merge scripts with the same name.
 
@@ -42,7 +42,7 @@ As a result you cannot have both machine & official in, as you don't know which 
 You see when Kiss fix or update a script (.ks) it doesn't remove the old one, it simply add a new one and the game picks the latest in .arc alphabetical order.
 The script extractor can't do that pick and so extract everything including duplicates; leading to the first issue above where i18nEx will only pick one.
 
-I made a point in this tool to merge all identicaly named scripts in one file, removing that issue for translated script and insurring that you always have a translation available for whaterver version of the script you're on.
+I made a point in this tool to merge all identicaly named scripts in one file, removing that issue for translated script and ensuring that you always have a translation available for whaterver version of the script you're on.
 Merging the official script will also enforce that, ensuring the official translation is always used when available.
 I recognize this is an additional step not everyone is going to take, but this is the best solution I came up with.
 
