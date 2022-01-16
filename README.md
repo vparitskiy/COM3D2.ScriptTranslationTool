@@ -21,17 +21,6 @@ It can:
 **When working with COM3D2 scripts you're dealing with tens of thousands of script files and more than 650.000 translated lines!  
 This takes time, be patient!**
 
-## How to add/edit translations
-
-- Translations are located in the ``Caches`` folder, feel free to edit them as you please.  
-Keep in mind that the program will always choose manual translations over official over machine.  
-One line per sentence with this format ``Japanese[tab]English``.
-
-- If you wish to use [Sugoi translator](https://www.youtube.com/watch?v=r8xFzVbmo7k) (Download links in the video description)  
-Just start it before this tool.  
-``\backendServer\Program-Backend\Sugoi-Translator-Offline\offlineTranslation\activateOfflineTranslationServer.bat``.  
-**Be warned this will use a LOT of CPU time on your computer (or GPU if you use cuda)**  
-If correctly configure the program will detect it and use it if it can't find a match in any cached data.
 
 ## Why merge Machine and Official Translations
 
@@ -48,6 +37,28 @@ I recognize this is an additional step not everyone is going to take, but this i
 
 Using a dedupe software isn't a bad solution in itself, you just won't be sure which script is the most recent one  
 (keeping in mind that the english extracted scripts also have duplicates)
+
+## How to merge Machine and Official Translations
+**You do not need the translated pack, everything is already included in the tool Cache folder**
+- Extract the Japanese **AND** English scripts from your games.  
+[How to Extract Scripts](https://github.com/ghorsington/COM3D2.i18nEx#extracting-translations-from-the-english-game)
+- Put the Japanese scripts in ``Scripts\Japanese``
+- Put the English scripts in ``Scripts\English``
+- Run the tool, it will start by building an official cache.
+- Wait for it to finish loading (remember dealing with thousands of files takes time) and press any key when asked too.
+- Wait for it to finish and grab your merged script from ``Scripts\i18nEx\``
+
+## How to add/edit translations
+
+- Translations are located in the ``Caches`` folder, feel free to edit them as you please.  
+Keep in mind that the program will always choose manual translations over official over machine.  
+One line per sentence with this format ``Japanese[tab]English``.
+
+- If you wish to use [Sugoi translator](https://www.youtube.com/watch?v=r8xFzVbmo7k) (Download links in the video description)  
+Just start it before this tool.  
+``\backendServer\Program-Backend\Sugoi-Translator-Offline\offlineTranslation\activateOfflineTranslationServer.bat``.  
+**Be warned this will use a LOT of CPU time on your computer (or GPU if you use cuda)**  
+If correctly configure the program will detect it and use it if it can't find a match in any cached data.
 
 ## Notes
 - Due to how i18nEx loads translation and how Kiss update their files, I strongly suggest to merge your official to the translation pack.
