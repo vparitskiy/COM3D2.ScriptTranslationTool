@@ -75,7 +75,7 @@ namespace COM3D2.ScriptTranslationTool
             if (File.Exists(manualCacheFile))
             {
                 Console.Write($"Loading Manual Translation Cache:     ");
-                machine = Cache.LoadFromFile(manualCacheFile, true);
+                manual = Cache.LoadFromFile(manualCacheFile, true);
             }
 
             // loading machine translation cache
@@ -167,7 +167,7 @@ namespace COM3D2.ScriptTranslationTool
                     // recover translation from caches
                     line = Cache.Get(line);
 
-                    // if no translation from cache, ask SugoiTranslator and add to cache, otherwise leve it blanck
+                    // if no translation from cache, ask SugoiTranslator and add to cache, otherwise leave it blanck
                     if (string.IsNullOrEmpty(line.English))
                     {
                         if (isSugoiRunning)

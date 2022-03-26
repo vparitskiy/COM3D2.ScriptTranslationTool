@@ -144,23 +144,21 @@ namespace COM3D2.ScriptTranslationTool
                 line.English = Program.manual[line.Japanese];
                 line.Color = ConsoleColor.Cyan;
             }
-            if (Program.includeOfficial && Program.official.ContainsKey(line.Japanese))
+            else if (Program.includeOfficial && Program.official.ContainsKey(line.Japanese))
             {
                 line.English = Program.official[line.Japanese];
                 line.Color = ConsoleColor.Green;
-                return line;
             }
-            if (Program.machine.ContainsKey(line.Japanese))
+            else if (Program.machine.ContainsKey(line.Japanese))
             {
                 line.English = Program.machine[line.Japanese];
                 line.Color = ConsoleColor.DarkBlue;
-                return line;
             }
             else
             {
-                line.Color = ConsoleColor.Blue;
-                return line;
+                line.Color = ConsoleColor.Blue;                
             }
+            return line;
         }
     }
 }
