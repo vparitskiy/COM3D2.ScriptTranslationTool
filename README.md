@@ -61,7 +61,7 @@ Just start it before this tool.
 If correctly configure the program will detect it and use it if it can't find a match in any cached data.
 
 ## Notes
-- __name_npc.txt must not be put inside your i18nEx folder or it'll cause lipsync issue for NPCs, use XUnityAutoTranslator instead.
+- __npc_names.txt must not be put inside your i18nEx folder or it'll cause lipsync issue for NPCs, use XUnityAutoTranslator instead.
 - Due to how i18nEx loads translation and how Kiss update their files, I strongly suggest to merge your official to the translation pack.
 - Any line the program can't parse or translate will be reported in Errors.txt
 - Please report any bug you find.
