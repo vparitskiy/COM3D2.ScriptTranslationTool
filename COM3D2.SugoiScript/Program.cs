@@ -22,15 +22,16 @@ namespace COM3D2.ScriptTranslationTool
 
         internal static char splitChar = '\t';
 
-        internal static string rawScriptFolder = @"Scripts\Japanese";
-        internal static string finishedScriptFolder = @"Scripts\JapaneseTranslated";
-        internal static string tldScriptFolder = @"Scripts\i18nEx\English\Script";
-        internal static string engScriptFolder = @"Scripts\English";
+        internal static string japaneseScriptFolder = @"Scripts\Japanese";
+        internal static string englishScriptFolder = @"Scripts\English";
+        internal static string translatedScriptFolder = @"Scripts\AlreadyTranslated";
+        internal static string i18nExScriptFolder = @"Scripts\i18nEx\English\Script";
+        
 
         internal static bool isSugoiRunning = false;
         internal static bool includeOfficial = false;
-        internal static bool exportToi18nEx = true;
-        internal static bool moveFinishedRawScript = false;
+        internal static bool exportToi18nEx = false;
+        internal static bool moveFinishedRawScript = true;
 
         static void Main()
         {
@@ -39,21 +40,21 @@ namespace COM3D2.ScriptTranslationTool
             Console.WriteLine("==================== Initialization ====================\n");
             Console.Title = "Initialization";
 
-            Tools.MakeFolder(engScriptFolder);
-            Tools.MakeFolder(rawScriptFolder);
+            Tools.MakeFolder(englishScriptFolder);
+            Tools.MakeFolder(japaneseScriptFolder);
             Tools.MakeFolder("Caches");
-            if (moveFinishedRawScript) Tools.MakeFolder(finishedScriptFolder);
+            if (moveFinishedRawScript) Tools.MakeFolder(translatedScriptFolder);
 
-            if (Directory.EnumerateFiles(rawScriptFolder, "*.txt", SearchOption.AllDirectories).Count() == 0)
+            if (Directory.EnumerateFiles(japaneseScriptFolder, "*.txt", SearchOption.AllDirectories).Count() == 0)
             {
-                Tools.WriteLine($"No Japanese scripts found, please put your extracted japanese scripts in {rawScriptFolder}", ConsoleColor.Red);
+                Tools.WriteLine($"No Japanese scripts found, please put your extracted japanese scripts in {japaneseScriptFolder}", ConsoleColor.Red);
             }
 
 
             // building the official translation cache.
-            if (Directory.Exists(engScriptFolder) && !File.Exists(officialCacheFile))
+            if (Directory.Exists(englishScriptFolder) && !File.Exists(officialCacheFile))
             {
-                if (Directory.EnumerateFiles(engScriptFolder, "*.txt", SearchOption.AllDirectories).Count() > 0)
+                if (Directory.EnumerateFiles(englishScriptFolder, "*.txt", SearchOption.AllDirectories).Count() > 0)
                 {
                     Tools.WriteLine("Official Translation Scripts found.", ConsoleColor.Green);
                     Cache.BuildOfficial();
@@ -125,7 +126,7 @@ namespace COM3D2.ScriptTranslationTool
             }           
 
 
-            IEnumerable<string> scriptFiles = Directory.EnumerateFiles(rawScriptFolder, "*.txt*", SearchOption.AllDirectories);
+            IEnumerable<string> scriptFiles = Directory.EnumerateFiles(japaneseScriptFolder, "*.txt*", SearchOption.AllDirectories);
             double scriptTotal = scriptFiles.Count();
             double scriptCount = 0;
             int lineCount = 0;
@@ -201,9 +202,9 @@ namespace COM3D2.ScriptTranslationTool
                 }
 
                 scriptCount++;
-                if (moveFinishedRawScript && !hasError)
+                if (moveFinishedRawScript)
                 {
-                    Script.MoveFinished(file);
+                    Script.MoveFinished(file, hasError);
                 }
 
                 Console.Title = $"Processing ({scriptCount} out of {scriptTotal} scripts)";

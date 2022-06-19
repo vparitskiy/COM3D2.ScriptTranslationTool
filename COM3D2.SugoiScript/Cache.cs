@@ -70,7 +70,7 @@ namespace COM3D2.ScriptTranslationTool
         /// </summary>
         internal static void BuildOfficial()
         {
-            string[] files = Directory.GetFiles(Program.engScriptFolder, "*.txt", SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(Program.englishScriptFolder, "*.txt", SearchOption.AllDirectories);
             double total = files.Length;
             double count = 0;
 
@@ -133,7 +133,7 @@ namespace COM3D2.ScriptTranslationTool
  
 
         /// <summary>
-        /// returns eventual translation from manual, official or machine cache
+        /// returns eventual translation from manual, official or machine cache 
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>

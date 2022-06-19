@@ -78,10 +78,13 @@ namespace COM3D2.ScriptTranslationTool
                 Program.manualCacheFile = ConfigurationManager.AppSettings.Get("ManualTranslationCache");
                 Program.errorFile = ConfigurationManager.AppSettings.Get("TranslationErrors");
 
-                Program.rawScriptFolder = ConfigurationManager.AppSettings.Get("JapaneseScriptPath");
-                Program.tldScriptFolder = ConfigurationManager.AppSettings.Get("i18nExScriptPath");
-                Program.engScriptFolder = ConfigurationManager.AppSettings.Get("EnglishScriptPath");
-                Program.finishedScriptFolder = ConfigurationManager.AppSettings.Get("JapaneseTranslatedRawScriptPath");
+                Program.japaneseScriptFolder = ConfigurationManager.AppSettings.Get("JapaneseScriptPath");
+                Program.i18nExScriptFolder = ConfigurationManager.AppSettings.Get("i18nExScriptPath");
+                Program.englishScriptFolder = ConfigurationManager.AppSettings.Get("EnglishScriptPath");
+                Program.translatedScriptFolder = ConfigurationManager.AppSettings.Get("AlreadyTranslatedScriptFolder");
+
+                Program.moveFinishedRawScript = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("MoveTranslated"));
+                Program.exportToi18nEx = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("ExportToi18nEx"));
             }
         }
 

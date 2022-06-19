@@ -13,9 +13,9 @@ namespace COM3D2.ScriptTranslationTool
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
-            if (Directory.Exists(Program.tldScriptFolder))
+            if (Directory.Exists(Program.i18nExScriptFolder))
             {
-                foreach (string file in Directory.EnumerateFiles(Program.tldScriptFolder))
+                foreach (string file in Directory.EnumerateFiles(Program.i18nExScriptFolder))
                 {
                     string fileName = Path.GetFileName(file);
                     dict.Add(fileName, file);
@@ -28,22 +28,22 @@ namespace COM3D2.ScriptTranslationTool
         
         internal static void CreateSortedFolders()
         {
-            string parentPath = Directory.GetParent(Program.tldScriptFolder).FullName;
+            string parentPath = Directory.GetParent(Program.i18nExScriptFolder).FullName;
             parentPath = Directory.GetParent(parentPath).FullName;
 
             if (Directory.Exists(parentPath))
             {
                 string newPath = $"{parentPath} ({DateTime.Now:dd.mm.yyyy hhmmss})";
-                Directory.Move(Program.tldScriptFolder, newPath);
+                Directory.Move(Program.i18nExScriptFolder, newPath);
             }
 
 
             // Make folders to sort files in
             foreach (KeyValuePair<string, string> keyValuePair in SortedFolder.Dict)
             {
-                Tools.MakeFolder(Path.Combine(Program.tldScriptFolder, keyValuePair.Value));
+                Tools.MakeFolder(Path.Combine(Program.i18nExScriptFolder, keyValuePair.Value));
             }
-            Tools.MakeFolder(Path.Combine(Program.tldScriptFolder, "[UnCategorized]"));
+            Tools.MakeFolder(Path.Combine(Program.i18nExScriptFolder, "[UnCategorized]"));
         }
 
         
@@ -67,7 +67,7 @@ namespace COM3D2.ScriptTranslationTool
                 }
             }
 
-            string path = Path.Combine(Program.tldScriptFolder, folder, line.FileName);
+            string path = Path.Combine(Program.i18nExScriptFolder, folder, line.FileName);
             File.AppendAllText(path, savedString);
 
             //Add to translated files list
@@ -78,11 +78,19 @@ namespace COM3D2.ScriptTranslationTool
         }
 
 
-        internal static void MoveFinished(string file)
+        internal static void MoveFinished(string file, bool hasError)
         {
+            string endPath;
             string path = file.Substring(file.IndexOf("Japanese"));
-            //path = path.Replace(Program.rawScriptFolder, "");
-            string endPath = Path.Combine(Program.finishedScriptFolder, path);
+            if (hasError)
+            {
+                endPath = Path.Combine(Program.translatedScriptFolder, "[ERROR]", path);
+            }
+            else
+            {
+                endPath = Path.Combine(Program.translatedScriptFolder, path);
+            }
+
             Tools.MakeFolder(Path.GetDirectoryName(endPath));
 
             try
