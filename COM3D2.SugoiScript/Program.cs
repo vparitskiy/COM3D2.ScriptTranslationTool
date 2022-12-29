@@ -12,11 +12,13 @@ namespace COM3D2.ScriptTranslationTool
         internal static Dictionary<string, string> machine = new Dictionary<string, string>();
         internal static Dictionary<string, string> official = new Dictionary<string, string>();
         internal static Dictionary<string, string> manual = new Dictionary<string,string> ();
+        internal static Dictionary<string, List<string>> subtitles = new Dictionary<string, List<string>>();
 
         internal static Dictionary<string, string> tldScripts = new Dictionary<string, string>();
 
         internal static string machineCacheFile = @"Caches\MachineTranslationCache.txt";
         internal static string officialCacheFile = @"Caches\OfficialTranslationCache.txt";
+        internal static string officialSubtitlesCache = @"Caches\officialSubtitlesCache.txt";
         internal static string manualCacheFile = @"Caches\ManualTranslationCache.txt";
         internal static string errorFile = "Errors.txt";
 
@@ -209,6 +211,36 @@ namespace COM3D2.ScriptTranslationTool
 
                 Console.Title = $"Processing ({scriptCount} out of {scriptTotal} scripts)";
             }
+
+            // Adding back subtitles
+            if (Directory.Exists("Caches/Subtitles") && exportToi18nEx)
+            {
+                IEnumerable<string> subtitlesFiles = Directory.EnumerateFiles("Caches/Subtitles");
+
+                foreach (string subFile in subtitlesFiles)
+                {
+                    string subFileName = Path.GetFileName(subFile);
+                    string [] scriptFile = Directory.GetFiles(i18nExScriptFolder, subFileName, SearchOption.AllDirectories);
+                    if (scriptFile.Length > 0)
+                    {
+                        Tools.WriteLine($"Adding subtitles to {subFileName}.", ConsoleColor.Green);
+                        string[] strings = File.ReadAllLines(subFile);
+                        File.AppendAllLines(scriptFile[0], strings);
+                    }
+                    else
+                    {
+                        Tools.WriteLine($"Creating new subtitle script {subFileName}", ConsoleColor.Green);
+                        string subPath = Path.Combine(i18nExScriptFolder, "[Subtitles]");
+                        Tools.MakeFolder(subPath);
+                        File.Copy(subFile, Path.Combine(subPath, subFileName));
+                    }
+                }
+            }
+            else
+            {
+                Tools.WriteLine($"No subtitles cache found, skipping", ConsoleColor.White);
+            }
+
 
             Tools.WriteLine($"\n{lineCount} lines translated across {scriptCount} files.", ConsoleColor.Green);
             Tools.WriteLine("Everything done, you may recover your scripts in Scripts\\i18nEx and copy them in your game folder.", ConsoleColor.Green);

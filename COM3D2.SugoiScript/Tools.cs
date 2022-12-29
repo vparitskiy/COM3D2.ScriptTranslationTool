@@ -75,6 +75,7 @@ namespace COM3D2.ScriptTranslationTool
             {
                 Program.machineCacheFile = ConfigurationManager.AppSettings.Get("MachineTranslationCache");
                 Program.officialCacheFile = ConfigurationManager.AppSettings.Get("OfficialTranslationCache");
+                Program.officialSubtitlesCache = ConfigurationManager.AppSettings.Get("OfficialSubtitlesCache");
                 Program.manualCacheFile = ConfigurationManager.AppSettings.Get("ManualTranslationCache");
                 Program.errorFile = ConfigurationManager.AppSettings.Get("TranslationErrors");
 

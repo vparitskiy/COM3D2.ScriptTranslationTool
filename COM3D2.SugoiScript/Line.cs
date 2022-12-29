@@ -46,6 +46,9 @@ namespace COM3D2.ScriptTranslationTool
             // for the rare lines having quotes
             JapanesePrep = JapanesePrep.Replace("\"", "\\\"");
 
+            // remove ♀ symbol because it messes up sugoi
+            JapanesePrep = JapanesePrep.Replace("♀", "");
+
             // remove repeating "ーー" and "……" (not needed with no_repeat_ngram_size=3  in flaskServer.py)
             //JapanesePrep = Regex.Replace(JapanesePrep, @"(ー)\1+?", "ー");
             //JapanesePrep = Regex.Replace(JapanesePrep, @"(…)\1+", "…");

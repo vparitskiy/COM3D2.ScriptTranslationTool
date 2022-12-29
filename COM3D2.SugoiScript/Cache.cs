@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace COM3D2.ScriptTranslationTool
 {
@@ -18,6 +19,7 @@ namespace COM3D2.ScriptTranslationTool
             if (File.Exists(file))
             {
                 Dictionary<string, string> dict = new Dictionary<string, string>();
+                List<string> subs = new List<string>();
 
                 string[] rawText = File.ReadAllLines(file);
                 double total = rawText.Length;
@@ -29,7 +31,10 @@ namespace COM3D2.ScriptTranslationTool
 
                     if (line.StartsWith(@"//")) { continue; }
                     if (string.IsNullOrEmpty(line)) { continue; }
-                    if (line.StartsWith(@"@VoiceSubtitle")) { continue; }
+                    if (line.StartsWith(@"@VoiceSubtitle")) {
+                        subs.Add(line);
+                        continue; 
+                    }
 
                     try
                     {
@@ -59,6 +64,12 @@ namespace COM3D2.ScriptTranslationTool
                         Tools.ShowProgress(count, total);
                     }
                 }
+
+                if (subs.Count >= 1)
+                {
+                    BuildSubtitles(file, subs);
+                }
+
                 return dict;
             }
             else return null;
@@ -96,6 +107,19 @@ namespace COM3D2.ScriptTranslationTool
                 count++;
                 Tools.ShowProgress(count, total);
             }
+        }
+
+
+        /// <summary>
+        /// Add subtitles to a specific cache.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="line"></param>
+        internal static void BuildSubtitles(string file, List<string> subs)
+        {
+            // add to multiple files cache
+            Tools.MakeFolder("Caches/Subtitles");
+            File.AppendAllLines(Path.Combine("Caches", "Subtitles", Path.GetFileName(file)), subs);
         }
 
 
