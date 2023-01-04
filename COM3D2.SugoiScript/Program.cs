@@ -39,6 +39,7 @@ namespace COM3D2.ScriptTranslationTool
         {
             Tools.GetConfig();
 
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.WriteLine("==================== Initialization ====================\n");
             Console.Title = "Initialization";
 
