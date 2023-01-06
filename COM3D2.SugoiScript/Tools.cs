@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Configuration;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace COM3D2.ScriptTranslationTool
 {
@@ -111,6 +112,18 @@ namespace COM3D2.ScriptTranslationTool
             Console.ForegroundColor = color;
             Console.Write(str);
             Console.ResetColor();
+        }
+
+
+        internal static void ListerKeyBoardEvent()
+        {
+            do
+            {
+                if (Console.ReadKey(true).Key == ConsoleKey.Escape || Console.ReadKey(true).Key == ConsoleKey.Pause || Console.ReadKey(true).Key == ConsoleKey.P)
+                {
+                    Program.pause = true;
+                }
+            } while (true);
         }
     }
 }

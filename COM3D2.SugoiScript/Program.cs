@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-
-
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace COM3D2.ScriptTranslationTool
 {
@@ -34,6 +34,8 @@ namespace COM3D2.ScriptTranslationTool
         internal static bool includeOfficial = false;
         internal static bool exportToi18nEx = false;
         internal static bool moveFinishedRawScript = true;
+
+        internal static bool pause = false;
 
         static void Main()
         {
@@ -126,8 +128,9 @@ namespace COM3D2.ScriptTranslationTool
             if (exportToi18nEx)
             {
                 Script.CreateSortedFolders();
-            }           
+            }
 
+            Task.Run(() => Tools.ListerKeyBoardEvent());
 
             IEnumerable<string> scriptFiles = Directory.EnumerateFiles(japaneseScriptFolder, "*.txt*", SearchOption.AllDirectories);
             double scriptTotal = scriptFiles.Count();
@@ -136,6 +139,15 @@ namespace COM3D2.ScriptTranslationTool
 
             foreach (string file in scriptFiles)
             {
+                if (pause)
+                {
+                    Tools.WriteLine("\n===================== Pause =====================", ConsoleColor.Red);
+                    Tools.WriteLine("Press any Key to resume.", ConsoleColor.Red);
+                    Console.ReadKey(true);
+                    pause = false;
+                }
+
+
                 Dictionary<string, string> dict = new Dictionary<string, string>();
                 string filename = Path.GetFileName(file);
                 bool hasError = false;
