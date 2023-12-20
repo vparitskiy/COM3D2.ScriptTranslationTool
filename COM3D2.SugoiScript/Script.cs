@@ -122,6 +122,7 @@ namespace COM3D2.ScriptTranslationTool
             {"l1_", "Osananajime"},
             {"m1_", "Masochist"},
             {"n1_", "Haraguro"},
+            {"p1_", "Gyaru" },
             {"v1_", "Kimajime"},
             {"w1_", "Kisakude"},
             {"a_", "Tsundere"},
@@ -143,7 +144,7 @@ namespace COM3D2.ScriptTranslationTool
             {"harem", "[Misc]\\Harem"},
             {"yuri", "[Misc]\\Yuri"},
             {"pj", "[Misc]\\Pajama Collab"},
-            { "cw", "[Misc]\\Camping Event"},
+            {"cw", "[Misc]\\Camping Event"},
             {"rehire", "[Misc]\\Extra Maids rehire"},
             {"club_gp", "[Misc]\\GP01 Club route"},
             {"xmas", "[Misc]\\Xmas"}
