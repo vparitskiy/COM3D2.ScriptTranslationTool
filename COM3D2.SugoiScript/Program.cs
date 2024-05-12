@@ -11,31 +11,30 @@ namespace COM3D2.ScriptTranslationTool
     {
         internal static Dictionary<string, string> machine = new Dictionary<string, string>();
         internal static Dictionary<string, string> official = new Dictionary<string, string>();
-        internal static Dictionary<string, string> manual = new Dictionary<string,string> ();
+        internal static Dictionary<string, string> manual = new Dictionary<string, string>();
         internal static Dictionary<string, List<string>> subtitles = new Dictionary<string, List<string>>();
 
-        internal static Dictionary<string, string> tldScripts = new Dictionary<string, string>();
-
+        internal static string cacheFolder = @"Caches";
         internal static string machineCacheFile = @"Caches\MachineTranslationCache.txt";
         internal static string officialCacheFile = @"Caches\OfficialTranslationCache.txt";
         internal static string officialSubtitlesCache = @"Caches\officialSubtitlesCache.txt";
         internal static string manualCacheFile = @"Caches\ManualTranslationCache.txt";
         internal static string errorFile = "Errors.txt";
 
-        internal static char splitChar = '\t';
+        internal const char splitChar = '\t';
 
         internal static string japaneseScriptFolder = @"Scripts\Japanese";
         internal static string englishScriptFolder = @"Scripts\English";
         internal static string translatedScriptFolder = @"Scripts\AlreadyTranslated";
+        internal static string japaneseUIFolder = @"UI\Japanese";
         internal static string i18nExScriptFolder = @"Scripts\i18nEx\English\Script";
+        internal static string i18nExUIFolder = @"UI\i18nEx\English\UI";
         
 
         internal static bool isSugoiRunning = false;
         internal static bool includeOfficial = false;
         internal static bool exportToi18nEx = false;
         internal static bool moveFinishedRawScript = true;
-
-        internal static bool pause = false;
 
         static void Main()
         {
@@ -48,12 +47,24 @@ namespace COM3D2.ScriptTranslationTool
             Tools.MakeFolder(englishScriptFolder);
             Tools.MakeFolder(japaneseScriptFolder);
             Tools.MakeFolder("Caches");
-            if (moveFinishedRawScript) Tools.MakeFolder(translatedScriptFolder);
+            Tools.MakeFolder(japaneseUIFolder);
 
-            if (Directory.EnumerateFiles(japaneseScriptFolder, "*.txt", SearchOption.AllDirectories).Count() == 0)
-            {
-                Tools.WriteLine($"No Japanese scripts found, please put your extracted japanese scripts in {japaneseScriptFolder}", ConsoleColor.Red);
-            }
+            if (moveFinishedRawScript)
+                Tools.MakeFolder(translatedScriptFolder);
+
+            int scriptsNb = Directory.EnumerateFiles(japaneseScriptFolder, "*.txt", SearchOption.AllDirectories).Count();
+            int UInb = Directory.EnumerateFiles(japaneseUIFolder, "*.csv", SearchOption.AllDirectories).Count();
+
+            if (scriptsNb > 0)
+                Tools.WriteLine($"Number of script files to translate: {scriptsNb}", ConsoleColor.DarkGreen);
+            else
+                Tools.WriteLine($"No Japanese scripts found, skipping script translation", ConsoleColor.DarkRed);
+
+            if (UInb > 0)
+                Tools.WriteLine($"Number of UI files to translate: {UInb}", ConsoleColor.DarkGreen);
+            else
+                Tools.WriteLine($"No UI files found, skipping UI translation", ConsoleColor.DarkRed);
+            Console.WriteLine("");
 
 
             // building the official translation cache.
@@ -77,12 +88,32 @@ namespace COM3D2.ScriptTranslationTool
                 includeOfficial = true;
             }
 
-            // loading manual translation cache
+            // loading manual translation caches
             if (File.Exists(manualCacheFile))
             {
                 Console.Write($"Loading Manual Translation Cache:     ");
                 manual = Cache.LoadFromFile(manualCacheFile, true);
             }
+
+            // loading multiple manual translation caches
+            string[] manualCaches = Directory.GetFiles(cacheFolder, "ManualTranslationCache_*", SearchOption.AllDirectories);
+            if (manualCaches.Length > 0)
+            {
+                foreach (string manualCache in manualCaches)
+                {
+                    Console.Write($"Loading additional Manual Translations [{Path.GetFileNameWithoutExtension(manualCache).Replace("ManualTranslationCache_", "")}]:     ");
+                    var loadedCache = Cache.LoadFromFile(manualCache, true);
+                    foreach (var entry in loadedCache)
+                    {
+                        if (!manual.ContainsKey(entry.Key))
+                        {
+                            manual.Add(entry.Key, entry.Value);
+                        }
+                    }
+                }
+            }
+
+
 
             // loading machine translation cache
             if (File.Exists(machineCacheFile))
@@ -124,136 +155,19 @@ namespace COM3D2.ScriptTranslationTool
             Console.WriteLine("Press any key to start");
             Console.ReadKey();
 
-            // Create folder to sort script files in
-            if (exportToi18nEx)
-            {
-                Script.CreateSortedFolders();
-            }
-
-            Task.Run(() => Tools.ListerKeyBoardEvent());
-
-            IEnumerable<string> scriptFiles = Directory.EnumerateFiles(japaneseScriptFolder, "*.txt*", SearchOption.AllDirectories);
-            double scriptTotal = scriptFiles.Count();
+            //Moved script translation to its own class
             double scriptCount = 0;
             int lineCount = 0;
 
-            foreach (string file in scriptFiles)
+            if (scriptsNb > 0)
             {
-                if (pause)
-                {
-                    Tools.WriteLine("\n===================== Pause =====================", ConsoleColor.Red);
-                    Tools.WriteLine("Press any Key to resume.", ConsoleColor.Red);
-                    Console.ReadKey(true);
-                    pause = false;
-                }
-
-
-                Dictionary<string, string> dict = new Dictionary<string, string>();
-                string filename = Path.GetFileName(file);
-                bool hasError = false;
-
-                // Load already translated script file with the same name if it exists
-                if (tldScripts.ContainsKey(filename))
-                {
-                    Console.WriteLine($"{filename} already exists, merging scripts");
-                    dict = Cache.LoadFromFile(tldScripts[filename]);
-                }
-
-                Tools.WriteLine($"\n-------- {filename} --------", ConsoleColor.Yellow);
-
-
-                string[] lines = File.ReadAllLines(file);
-                foreach(string l in lines)
-                {
-                    Line line = new Line(filename, l);
-                    lineCount++;
-                    
-                    // skip if the line has already been translated for this script
-                    if (dict.ContainsKey(line.Japanese))
-                    {
-                        continue;
-                    }
-
-                    // skip if line is empty
-                    if (string.IsNullOrEmpty(line.JapanesePrep)) { continue; }
-
-                    Console.Write(line.Japanese);
-                    Tools.Write(" => ", ConsoleColor.Yellow);
-
-                    // recover translation from caches
-                    line = Cache.Get(line);
-
-                    // if no translation from cache, ask SugoiTranslator and add to cache, otherwise leave it blanck
-                    if (string.IsNullOrEmpty(line.English))
-                    {
-                        if (isSugoiRunning)
-                        {
-                            line = Translate.ToJapanese(line);
-
-                            if (line.HasRepeat || line.HasError)
-                            {
-                                hasError = true;
-                                Cache.AddToError(line);
-                                Tools.WriteLine($"This line returned a faulty translation and was placed in {errorFile}", ConsoleColor.Red);
-                                continue;
-                            }
-
-                            Cache.AddTo(line);
-                        }
-                        else
-                        {
-                            Tools.WriteLine($"This line wasn't found in any cache and can't be translated since sugoi isn't running", ConsoleColor.Red);
-                            continue;
-                        }
-                    }
-
-                    Tools.WriteLine(line.English, line.Color);
-
-                    // add to i18nEx script folder
-                    if (exportToi18nEx)
-                    {
-                        Script.AddTo(line);
-                    }                    
-                }
-
-                scriptCount++;
-                if (moveFinishedRawScript)
-                {
-                    Script.MoveFinished(file, hasError);
-                }
-
-                Console.Title = $"Processing ({scriptCount} out of {scriptTotal} scripts)";
+                ScriptTranslation.Process(ref scriptCount, ref lineCount);
             }
 
-            // Adding back subtitles
-            if (Directory.Exists("Caches/Subtitles") && exportToi18nEx)
+            if (UInb > 0)
             {
-                IEnumerable<string> subtitlesFiles = Directory.EnumerateFiles("Caches/Subtitles");
-
-                foreach (string subFile in subtitlesFiles)
-                {
-                    string subFileName = Path.GetFileName(subFile);
-                    string [] scriptFile = Directory.GetFiles(i18nExScriptFolder, subFileName, SearchOption.AllDirectories);
-                    if (scriptFile.Length > 0)
-                    {
-                        Tools.WriteLine($"Adding subtitles to {subFileName}.", ConsoleColor.Green);
-                        string[] strings = File.ReadAllLines(subFile);
-                        File.AppendAllLines(scriptFile[0], strings);
-                    }
-                    else
-                    {
-                        Tools.WriteLine($"Creating new subtitle script {subFileName}", ConsoleColor.Green);
-                        string subPath = Path.Combine(i18nExScriptFolder, "[Subtitles]");
-                        Tools.MakeFolder(subPath);
-                        File.Copy(subFile, Path.Combine(subPath, subFileName));
-                    }
-                }
+                UITranslation.Process();
             }
-            else
-            {
-                Tools.WriteLine($"No subtitles cache found, skipping", ConsoleColor.White);
-            }
-
 
             Tools.WriteLine($"\n{lineCount} lines translated across {scriptCount} files.", ConsoleColor.Green);
             Tools.WriteLine("Everything done, you may recover your scripts in Scripts\\i18nEx and copy them in your game folder.", ConsoleColor.Green);

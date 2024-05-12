@@ -55,7 +55,7 @@ namespace COM3D2.ScriptTranslationTool
                     }
                     catch (IndexOutOfRangeException)
                     {
-                        AddToError(new Line(file, line));
+                        AddToError(new ScriptLine(file, line));
                         continue;
                     }
 
@@ -128,7 +128,7 @@ namespace COM3D2.ScriptTranslationTool
         /// </summary>
         /// <param name="jp"></param>
         /// <param name="eng"></param>
-        internal static void AddTo(Line line)
+        internal static void AddTo(ILine line)
         {
             if (string.IsNullOrEmpty(line.Japanese) || string.IsNullOrEmpty(line.English))
             {
@@ -149,7 +149,7 @@ namespace COM3D2.ScriptTranslationTool
         /// Add a faulty line in an error file
         /// </summary>
         /// <param name="line"></param>
-        internal static void AddToError(Line line)
+        internal static void AddToError(ILine line)
         {
             string str = $"##{line.FileName}\n{line.Japanese}\n{line.English}\n\n";
             File.AppendAllText(Program.errorFile, str);
@@ -159,9 +159,7 @@ namespace COM3D2.ScriptTranslationTool
         /// <summary>
         /// returns eventual translation from manual, official or machine cache 
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        internal static Line Get(Line line)
+        internal static ILine Get(ILine line)
         {
             if (Program.manual.ContainsKey(line.Japanese))
             {

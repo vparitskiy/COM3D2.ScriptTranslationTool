@@ -4,7 +4,7 @@ using System.IO;
 
 namespace COM3D2.ScriptTranslationTool
 {
-    internal class Script
+    internal class ScriptManagement
     { 
         /// <summary>
         /// List Already Translated Script files.
@@ -53,7 +53,7 @@ namespace COM3D2.ScriptTranslationTool
         /// <param name="file"></param>
         /// <param name="jp"></param>
         /// <param name="eng"></param>
-        internal static void AddTo(Line line)
+        internal static void AddTo(ILine line)
         {
             string savedString = Tools.FormatLine(line.Japanese, line.English);
             string folder = "[UnCategorized]";
@@ -71,9 +71,9 @@ namespace COM3D2.ScriptTranslationTool
             File.AppendAllText(path, savedString);
 
             //Add to translated files list
-            if (!Program.tldScripts.ContainsKey(line.FileName) && Program.exportToi18nEx)
+            if (!ScriptTranslation.tldScripts.ContainsKey(line.FileName) && Program.exportToi18nEx)
             {
-                Program.tldScripts.Add(line.FileName, path);
+                ScriptTranslation.tldScripts.Add(line.FileName, path);
             }
         }
 

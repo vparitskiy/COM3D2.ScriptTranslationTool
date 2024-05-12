@@ -51,10 +51,10 @@ namespace COM3D2.ScriptTranslationTool
         internal static bool CheckTranslatorState()
         {
             bool isRunning;
-            Line test = new Line("test", "テスト");
+            ILine test = new ScriptLine("test", "テスト");
             try
             {
-                Line _ = Translate.ToJapanese(test);
+                ILine _ = Translate.ToEnglish(test);
                 Tools.WriteLine("\nSugoi Translator is Ready", ConsoleColor.Green);
                 isRunning = true;
             }
@@ -121,7 +121,7 @@ namespace COM3D2.ScriptTranslationTool
             {
                 if (Console.ReadKey(true).Key == ConsoleKey.Escape || Console.ReadKey(true).Key == ConsoleKey.Pause || Console.ReadKey(true).Key == ConsoleKey.P)
                 {
-                    Program.pause = true;
+                    ScriptTranslation.pause = true;
                 }
             } while (true);
         }
