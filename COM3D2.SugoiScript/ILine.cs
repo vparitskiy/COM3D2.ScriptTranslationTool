@@ -16,7 +16,6 @@ namespace COM3D2.ScriptTranslationTool
         bool HasError { get; set; }
     }
 
-
     internal class ScriptLine : ILine
     {
         public string FileName { get; set; }
@@ -160,8 +159,16 @@ namespace COM3D2.ScriptTranslationTool
                 ChTraditional = values[6];
             }
 
-            //Might change if I need to clean Japanese before translation
-            JapanesePrep = Japanese;
+            //Some UI entries may contain \r, partially breaking the cache as a result...
+            if (Japanese.Contains("\r") || Japanese.Contains("\n"))
+            {
+                string preString = Japanese.Replace("\r", "");
+                preString = preString.Replace("\n", "");
+                JapanesePrep = preString;
+                Japanese = preString;
+            }
+            else
+                JapanesePrep = Japanese;
         }
 
         /// <summary>

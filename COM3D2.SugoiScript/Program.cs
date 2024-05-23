@@ -95,8 +95,8 @@ namespace COM3D2.ScriptTranslationTool
                 manual = Cache.LoadFromFile(manualCacheFile, true);
             }
 
-            // loading multiple manual translation caches
-            string[] manualCaches = Directory.GetFiles(cacheFolder, "ManualTranslationCache_*", SearchOption.AllDirectories);
+            // loading multiple custom translation caches
+            string[] manualCaches = Directory.GetFiles(cacheFolder, "CustomTranslationCache_*", SearchOption.AllDirectories);
             if (manualCaches.Length > 0)
             {
                 foreach (string manualCache in manualCaches)
@@ -169,8 +169,15 @@ namespace COM3D2.ScriptTranslationTool
                 UITranslation.Process();
             }
 
-            Tools.WriteLine($"\n{lineCount} lines translated across {scriptCount} files.", ConsoleColor.Green);
-            Tools.WriteLine("Everything done, you may recover your scripts in Scripts\\i18nEx and copy them in your game folder.", ConsoleColor.Green);
+            if (scriptsNb > 0)
+            {
+                Tools.WriteLine($"\n{lineCount} lines translated across {scriptCount} files.", ConsoleColor.Green);
+                Tools.WriteLine("Everything done, you may recover your scripts in Scripts\\i18nEx and copy them in your game folder.", ConsoleColor.Green);
+            }
+            if (UInb > 0)
+            {
+                Tools.WriteLine("\nEverything done, you may recover your UI files  in UI\\i18nEx and copy them in your game folder.", ConsoleColor.Green);
+            }
             Console.WriteLine("Press any key to close this program.");
             Console.ReadKey();
         }

@@ -15,6 +15,7 @@ namespace COM3D2.ScriptTranslationTool
         {
             Tools.MakeFolder(Program.i18nExUIFolder);
             IEnumerable<string> csvs = Directory.EnumerateFiles(Program.japaneseUIFolder, "*.csv*", SearchOption.AllDirectories);
+            int csvCount = 1;
             
             foreach (string csv in csvs)
             {
@@ -26,6 +27,8 @@ namespace COM3D2.ScriptTranslationTool
                 //let's try to translate each line
                 for(int i = 0; i < csvLines.Count; i++)
                 {
+                    Console.Title = $"Processing: line {i}/{csvLines.Count} from {csvCount}/{csvs.Count()} UI files";
+
                     var line = csvLines[i];
 
                     Console.Write(line.Japanese);
@@ -87,6 +90,8 @@ namespace COM3D2.ScriptTranslationTool
                 }
 
                 File.AppendAllLines(newPath, lines);
+
+                csvCount++;
             }
         }
 
