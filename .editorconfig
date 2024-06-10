@@ -5,3 +5,9 @@ dotnet_diagnostic.S125.severity = none
 
 # S2223: Non-constant static fields should not be visible
 dotnet_diagnostic.S2223.severity = silent
+
+# S2190: Recursion should not be infinite
+dotnet_diagnostic.S2190.severity = suggestion
+
+# S1643: Strings should not be concatenated using '+' in a loop
+dotnet_diagnostic.S1643.severity = silent

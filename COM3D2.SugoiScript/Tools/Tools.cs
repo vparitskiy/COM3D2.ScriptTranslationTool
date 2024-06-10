@@ -5,7 +5,7 @@ using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace COM3D2.ScriptTranslationTool
 {
-    internal class Tools
+    internal static class Tools
     {
         /// <summary>
         /// Display progress as xx% in the console
@@ -15,7 +15,7 @@ namespace COM3D2.ScriptTranslationTool
             double progress = (current / max) * 100;
             string str = Math.Floor(progress).ToString().PadRight(3);
             Console.Write($"\b\b\b\b{str}%");
-            if (str == "100") { Console.Write("\n"); };
+            if (str == "100") { Console.Write("\n"); }
         }
 
 
@@ -54,7 +54,7 @@ namespace COM3D2.ScriptTranslationTool
             ILine test = new ScriptLine("test", "テスト");
             try
             {
-                ILine _ = Translate.ToEnglish(test);
+                Translate.ToEnglish(test);
                 Tools.WriteLine("\nSugoi Translator is Ready", ConsoleColor.Green);
                 isRunning = true;
             }
@@ -87,6 +87,9 @@ namespace COM3D2.ScriptTranslationTool
 
                 Program.moveFinishedRawScript = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("MoveTranslated"));
                 Program.exportToi18nEx = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("ExportToi18nEx"));
+
+                Program.jpGameDataPath = ConfigurationManager.AppSettings.Get("JPGamePath");
+                Program.engGameDataPath = ConfigurationManager.AppSettings.Get("ENGGamePath");
             }
         }
 
@@ -112,18 +115,6 @@ namespace COM3D2.ScriptTranslationTool
             Console.ForegroundColor = color;
             Console.Write(str);
             Console.ResetColor();
-        }
-
-
-        internal static void ListerKeyBoardEvent()
-        {
-            do
-            {
-                if (Console.ReadKey(true).Key == ConsoleKey.Escape || Console.ReadKey(true).Key == ConsoleKey.Pause || Console.ReadKey(true).Key == ConsoleKey.P)
-                {
-                    ScriptTranslation.pause = true;
-                }
-            } while (true);
         }
     }
 }

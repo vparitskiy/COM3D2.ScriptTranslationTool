@@ -8,14 +8,22 @@ namespace COM3D2.ScriptTranslationTool
     internal class Translate
     {
 
+        private const string adress = "http://127.0.0.1:14366/";
         private static readonly HttpClient client = new HttpClient();
 
 
         internal static ILine ToEnglish(ILine line)
         {
-            line.English = TranslateAsync(line.JapanesePrep).Result;
+            line.MachineTranslation = TranslateAsync(line.JapanesePrep).Result;
 
             return line;
+        }
+
+        internal static string ToEnglish(string text)
+        {
+            string TldLine = TranslateAsync(text).Result;
+
+            return TldLine;
         }
         
 
@@ -31,7 +39,7 @@ namespace COM3D2.ScriptTranslationTool
             //string json = GetJson(str);
 
             var response = await client.PostAsync(
-                "http://127.0.0.1:14366/",
+                adress,
                 new StringContent(json, Encoding.UTF8, "application/json"));
 
             string responseString = await response.Content.ReadAsStringAsync();
