@@ -78,6 +78,17 @@ namespace COM3D2.ScriptTranslationTool
                     if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
                     {
                         currentLine.GetTranslation();
+
+                        //ignore faulty returns
+                        if (currentLine.HasRepeat || currentLine.HasError)
+                        {
+                            hasError = true;
+                            Cache.AddToError(currentLine);
+                            Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
+                            continue;
+                        }
+
+                        Cache.AddToMachineCache(currentLine);
                     }
                     else if (string.IsNullOrEmpty(currentLine.English))
                     {
@@ -85,18 +96,8 @@ namespace COM3D2.ScriptTranslationTool
                         continue;
                     }
 
-                    //ignore faulty returns
-                    if (currentLine.HasRepeat || currentLine.HasError)
-                    {
-                        hasError = true;
-                        Cache.AddToError(currentLine);
-                        Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
-                        continue;
-                    }
 
                     Tools.WriteLine(currentLine.English, currentLine.Color);
-
-                    Cache.AddToMachineCache(currentLine);
 
                     currentLine.FilePath = filename;
 

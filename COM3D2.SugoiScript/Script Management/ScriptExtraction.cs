@@ -241,6 +241,9 @@ namespace COM3D2.ScriptTranslationTool
                         arcHistoryJP.Remove(arcName);
                 }
 
+                //ignore ChuBLips stuff
+                if (arcName.Contains("_cbl") && Program.isIgnoreCbl) { continue; }
+
                 Tools.Write($"{arcName}: ", ConsoleColor.Gray);
 
                 //opening the .arc file

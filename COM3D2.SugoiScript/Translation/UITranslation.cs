@@ -65,34 +65,7 @@ namespace COM3D2.ScriptTranslationTool
                         Cache.AddToError(currentLine);
                         Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
                         continue;
-                    }
-
-                    // if no translation from cache, ask SugoiTranslator and add to cache, otherwise leave it blanck
-                    /*
-                    if (string.IsNullOrEmpty(currentLine.English))
-                    {
-                        if (Program.isSugoiRunning)
-                        {
-                            Translate.ToEnglish(currentLine);
-
-                            currentLine.CleanPost();
-
-                            if (currentLine.HasRepeat || currentLine.HasError)
-                            {
-                                Cache.AddToError(currentLine);
-                                Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
-                                continue;
-                            }
-
-                            Cache.AddTo(currentLine);
-                        }
-                        else
-                        {
-                            Tools.WriteLine($"This line wasn't found in any cache and can't be translated since sugoi isn't running", ConsoleColor.Red);
-                        }
-                    }
-                    */
-                  
+                    }                  
 
 
                     Tools.WriteLine(currentLine.English, currentLine.Color);

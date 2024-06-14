@@ -317,7 +317,7 @@ namespace COM3D2.ScriptTranslationTool
 
         public static void SaveBson<T>(T objectToSerialize, string path)
         {
-            using (var fileStream = new FileStream(path, FileMode.CreateNew))
+            using (var fileStream = new FileStream(path, FileMode.Create))
             using (var writer = new BsonDataWriter(fileStream))
             {
                 JsonSerializer serializer = new JsonSerializer();

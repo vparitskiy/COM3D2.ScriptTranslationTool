@@ -39,6 +39,7 @@ namespace COM3D2.ScriptTranslationTool
         internal static bool forcedTranslation = false;
         internal static bool isSourceJpGame = true;
         internal static bool isSourceEngGame = true;
+        internal static bool isIgnoreCbl = true;
 
         static void Main()
         {
@@ -122,8 +123,7 @@ namespace COM3D2.ScriptTranslationTool
             if (scriptsNb > 0 || isSourceJpGame)
                 ScriptTranslation.Process(ref scriptCount, ref lineCount);
 
-            if (UInb > 0)
-                UITranslation.Process();
+            //if (UInb > 0) { UITranslation.Process(); }
 
             if (scriptsNb > 0 || isSourceJpGame)
             {
@@ -155,6 +155,7 @@ namespace COM3D2.ScriptTranslationTool
                 if ((key.Key == ConsoleKey.D6) || (key.Key == ConsoleKey.NumPad6)) { isExportBson = !isExportBson; }
                 if ((key.Key == ConsoleKey.D7) || (key.Key == ConsoleKey.NumPad7)) { JpScriptExtraction.ExtractJapanese(isSourceJpGame); }
                 if ((key.Key == ConsoleKey.D8) || (key.Key == ConsoleKey.NumPad8)) { EngScriptExtraction.ExtractOfficial(isSourceEngGame); }
+                if ((key.Key == ConsoleKey.D9) || (key.Key == ConsoleKey.NumPad9)) { UITranslation.Process(); }
 
 
                 Console.ResetColor();
@@ -166,6 +167,7 @@ namespace COM3D2.ScriptTranslationTool
                 Console.Write($" 6. Export as: "); Tools.WriteLine(isExportBson ? "A single .bson" : "Collection of .txt", ConsoleColor.Blue);
                 Console.Write($" 7. Build/Update the japanese cache. Source: "); Tools.WriteLine($"{(isSourceJpGame ? jpGameDataPath : japaneseScriptFolder)}", ConsoleColor.Blue);
                 Console.Write($" 8. Build/Update the official translation cache. Source: "); Tools.WriteLine($"{(isSourceEngGame ? engGameDataPath : englishScriptFolder)}", ConsoleColor.Blue);
+                Console.Write($" 9. Translate UI .csv");
                 Console.Write("\nPress Numbers for options or Enter to start translating: ");
 
                 key = Console.ReadKey();
