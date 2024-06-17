@@ -9,7 +9,7 @@ namespace COM3D2.ScriptTranslationTool
     {
         internal static void Process()
         {
-            Tools.MakeFolder(Program.i18nExUIFolder);
+            Tools.MakeFolder(Program.i18NExUiFolder);
             IEnumerable<string> csvs = Directory.EnumerateFiles(Program.japaneseUIFolder, "*.csv*", SearchOption.AllDirectories);
             int csvCount = 1;
             
@@ -32,13 +32,13 @@ namespace COM3D2.ScriptTranslationTool
                         continue;
 
                     //recover translation cache
-                    if (Cache.csvCache.ContainsKey(currentLine.Japanese))
+                    if (Cache.CsvCache.ContainsKey(currentLine.Japanese))
                     {
-                        currentLine.OfficialTranslation = Cache.csvCache[currentLine.Japanese].OfficialTranslation;
-                        currentLine.MachineTranslation = Cache.csvCache[currentLine.Japanese].MachineTranslation;
-                        currentLine.ManualTranslation = Cache.csvCache[currentLine.Japanese].ManualTranslation;
-                        currentLine.ChTraditional = Cache.csvCache[currentLine.Japanese].ChTraditional;
-                        currentLine.ChSimple = Cache.csvCache[currentLine.Japanese].ChSimple;
+                        currentLine.OfficialTranslation = Cache.CsvCache[currentLine.Japanese].OfficialTranslation;
+                        currentLine.MachineTranslation = Cache.CsvCache[currentLine.Japanese].MachineTranslation;
+                        currentLine.ManualTranslation = Cache.CsvCache[currentLine.Japanese].ManualTranslation;
+                        currentLine.ChTraditional = Cache.CsvCache[currentLine.Japanese].ChTraditional;
+                        currentLine.ChSimple = Cache.CsvCache[currentLine.Japanese].ChSimple;
                     }
 
                     Console.Write(currentLine.Japanese);
@@ -79,7 +79,7 @@ namespace COM3D2.ScriptTranslationTool
                 if (csvLines.Count == 0) continue;
 
                 //Get the new pathcreate folders and write the header
-                string newPath = csv.Replace("UI\\Japanese", Program.i18nExUIFolder);
+                string newPath = csv.Replace("UI\\Japanese", Program.i18NExUiFolder);
                 Tools.MakeFolder(Path.GetDirectoryName(newPath));
                 File.WriteAllText(newPath, csvLines[0].ExportHeader());
 

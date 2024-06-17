@@ -13,9 +13,9 @@ namespace COM3D2.ScriptTranslationTool
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
 
-            if (Directory.Exists(Program.i18nExScriptFolder))
+            if (Directory.Exists(Program.i18NExScriptFolder))
             {
-                foreach (string file in Directory.EnumerateFiles(Program.i18nExScriptFolder))
+                foreach (string file in Directory.EnumerateFiles(Program.i18NExScriptFolder))
                 {
                     string fileName = Path.GetFileName(file);
                     dict.Add(fileName, file);
@@ -27,22 +27,22 @@ namespace COM3D2.ScriptTranslationTool
         
         internal static void CreateSortedFolders()
         {
-            string parentPath = Directory.GetParent(Program.i18nExScriptFolder).FullName;
+            string parentPath = Directory.GetParent(Program.i18NExScriptFolder).FullName;
             parentPath = Directory.GetParent(parentPath).FullName;
 
             if (Directory.Exists(parentPath))
             {
                 string newPath = $"{parentPath} ({DateTime.Now:dd.mm.yyyy hhmmss})";
-                Directory.Move(Program.i18nExScriptFolder, newPath);
+                Directory.Move(Program.i18NExScriptFolder, newPath);
             }
 
 
             // Make folders to sort files in
             foreach (KeyValuePair<string, string> keyValuePair in SortedFolder.Dict)
             {
-                Tools.MakeFolder(Path.Combine(Program.i18nExScriptFolder, keyValuePair.Value));
+                Tools.MakeFolder(Path.Combine(Program.i18NExScriptFolder, keyValuePair.Value));
             }
-            Tools.MakeFolder(Path.Combine(Program.i18nExScriptFolder, "[UnCategorized]"));
+            Tools.MakeFolder(Path.Combine(Program.i18NExScriptFolder, "[UnCategorized]"));
         }
         
         /// <summary>
@@ -62,7 +62,7 @@ namespace COM3D2.ScriptTranslationTool
                 }
             }
 
-            string path = Path.Combine(Program.i18nExScriptFolder, folder, line.FilePath);
+            string path = Path.Combine(Program.i18NExScriptFolder, folder, line.FilePath);
             File.AppendAllText(path, savedString);
         }
 

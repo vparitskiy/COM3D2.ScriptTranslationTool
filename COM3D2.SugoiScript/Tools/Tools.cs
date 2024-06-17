@@ -1,119 +1,118 @@
 ﻿using System;
-using System.IO;
 using System.Configuration;
+using System.Globalization;
+using System.IO;
 
-namespace COM3D2.ScriptTranslationTool
+namespace COM3D2.ScriptTranslationTool;
+
+internal static class Tools
 {
-    internal static class Tools
+    /// <summary>
+    /// Display progress as xx% in the console
+    /// </summary>
+    internal static void ShowProgress(double current, double max)
     {
-        /// <summary>
-        /// Display progress as xx% in the console
-        /// </summary>
-        internal static void ShowProgress(double current, double max)
+        var progress = (current / max) * 100;
+        var str = Math.Floor(progress).ToString(CultureInfo.CurrentCulture).PadRight(3);
+        Console.Write($"\b\b\b\b{str}%");
+        if (str == "100") { Console.Write("\n"); }
+    }
+
+
+    /// <summary>
+    /// Create directory helper
+    /// </summary>
+    /// <param name="folderPath"></param>
+    public static void MakeFolder(string folderPath)
+    {
+        if (Directory.Exists(folderPath)) return;
+        Directory.CreateDirectory(folderPath);
+    }
+
+
+    /// <summary>
+    /// return a formated line suited for scripts and caches
+    /// </summary>
+    /// <param name="jp"></param>
+    /// <param name="eng"></param>
+    /// <returns></returns>
+    internal static string FormatLine(string jp, string eng)
+    {
+        return $"{jp}{Program.SplitChar}{eng}\n";
+    }
+
+
+    /// <summary>
+    /// Check if sugoi translator is up and running
+    /// </summary>
+    internal static bool CheckTranslatorState()
+    {
+        bool isRunning;
+        ILine test = new ScriptLine("test", "テスト");
+        try
         {
-            double progress = (current / max) * 100;
-            string str = Math.Floor(progress).ToString().PadRight(3);
-            Console.Write($"\b\b\b\b{str}%");
-            if (str == "100") { Console.Write("\n"); }
+            Translate.ToEnglish(test);
+            WriteLine("\nSugoi Translator is Ready", ConsoleColor.Green);
+            isRunning = true;
         }
-
-
-        /// <summary>
-        /// Create directory helper
-        /// </summary>
-        /// <param name="folderPath"></param>
-        public static void MakeFolder(string folderPath)
+        catch (Exception)
         {
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
+            WriteLine("\nSugoi Translator is Offline, uncached sentences won't be translated", ConsoleColor.Red);
+            isRunning= false;
         }
+        return isRunning;
+    }
 
 
-        /// <summary>
-        /// return a formated line suited for scripts and caches
-        /// </summary>
-        /// <param name="jp"></param>
-        /// <param name="eng"></param>
-        /// <returns></returns>
-        internal static string FormatLine(string jp, string eng)
-        {
-            string formatedLine = $"{jp}{Program.splitChar}{eng}\n";
-            return formatedLine;
-        }
+    /// <summary>
+    /// Recover config from file
+    /// </summary>
+    internal static void GetConfig()
+    {
+        if (!File.Exists("COM3D2.ScriptTranslationTool.dll.config")) return;
+        Program.machineCacheFile = GetAbsolutePath(ConfigurationManager.AppSettings.Get("MachineTranslationCache"));
+        Program.officialCacheFile = GetAbsolutePath(ConfigurationManager.AppSettings.Get("OfficialTranslationCache"));
+        Program.officialSubtitlesCache = GetAbsolutePath(ConfigurationManager.AppSettings.Get("OfficialSubtitlesCache"));
+        Program.manualCacheFile = GetAbsolutePath(ConfigurationManager.AppSettings.Get("ManualTranslationCache"));
+        
+        Program.errorFile = GetAbsolutePath(ConfigurationManager.AppSettings.Get("TranslationErrors"));
 
+        Program.japaneseScriptFolder = GetAbsolutePath(ConfigurationManager.AppSettings.Get("JapaneseScriptPath"));
+        Program.i18NExScriptFolder = GetAbsolutePath(ConfigurationManager.AppSettings.Get("i18nExScriptPath"));
+        Program.englishScriptFolder = GetAbsolutePath(ConfigurationManager.AppSettings.Get("EnglishScriptPath"));
+        Program.translatedScriptFolder = GetAbsolutePath(ConfigurationManager.AppSettings.Get("AlreadyTranslatedScriptFolder"));
 
-        /// <summary>
-        /// Check if sugoi translator is up and running
-        /// </summary>
-        internal static bool CheckTranslatorState()
-        {
-            bool isRunning;
-            ILine test = new ScriptLine("test", "テスト");
-            try
-            {
-                Translate.ToEnglish(test);
-                Tools.WriteLine("\nSugoi Translator is Ready", ConsoleColor.Green);
-                isRunning = true;
-            }
-            catch (Exception)
-            {
-                Tools.WriteLine("\nSugoi Translator is Offline, uncached sentences won't be translated", ConsoleColor.Red);
-                isRunning= false;
-            }
-            return isRunning;
-        }
+        Program.moveFinishedRawScript = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("MoveTranslated"));
+        Program.exportToi18NEx = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("ExportToi18nEx"));
 
+        Program.jpGameDataPath = GetAbsolutePath(ConfigurationManager.AppSettings.Get("JPGamePath"));
+        Program.engGameDataPath = GetAbsolutePath(ConfigurationManager.AppSettings.Get("ENGGamePath"));
+    }
 
-        /// <summary>
-        /// Recover config from file
-        /// </summary>
-        internal static void GetConfig()
-        {
-            if (File.Exists("COM3D2.ScriptTranslationTool.dll.config"))
-            {
-                Program.machineCacheFile = ConfigurationManager.AppSettings.Get("MachineTranslationCache");
-                Program.officialCacheFile = ConfigurationManager.AppSettings.Get("OfficialTranslationCache");
-                Program.officialSubtitlesCache = ConfigurationManager.AppSettings.Get("OfficialSubtitlesCache");
-                Program.manualCacheFile = ConfigurationManager.AppSettings.Get("ManualTranslationCache");
-                Program.errorFile = ConfigurationManager.AppSettings.Get("TranslationErrors");
+    private static string GetAbsolutePath(string path)
+    {
+        var absolutePath = Path.IsPathRooted(path)
+            ? path
+            : Path.Combine(Program.appDirectory, path ?? throw new ArgumentNullException(nameof(path)));
+        return absolutePath;
+    }
+    
+    internal static void WriteLine(string str, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+        Console.WriteLine(str);
+        Console.ResetColor();
+    }
 
-                Program.japaneseScriptFolder = ConfigurationManager.AppSettings.Get("JapaneseScriptPath");
-                Program.i18nExScriptFolder = ConfigurationManager.AppSettings.Get("i18nExScriptPath");
-                Program.englishScriptFolder = ConfigurationManager.AppSettings.Get("EnglishScriptPath");
-                Program.translatedScriptFolder = ConfigurationManager.AppSettings.Get("AlreadyTranslatedScriptFolder");
-
-                Program.moveFinishedRawScript = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("MoveTranslated"));
-                Program.exportToi18nEx = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("ExportToi18nEx"));
-
-                Program.jpGameDataPath = ConfigurationManager.AppSettings.Get("JPGamePath");
-                Program.engGameDataPath = ConfigurationManager.AppSettings.Get("ENGGamePath");
-            }
-        }
-
-        /// <summary>
-        /// WriteLine with selected color then reset to default
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="color"></param>
-        internal static void WriteLine(string str, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.WriteLine(str);
-            Console.ResetColor();
-        }
-
-        /// <summary>
-        /// Write with selected color then reset to default
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="color"></param>
-        internal static void Write(string str, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.Write(str);
-            Console.ResetColor();
-        }
+    /// <summary>
+    /// Write with selected color then reset to default
+    /// </summary>
+    /// <param name="str"></param>
+    /// <param name="color"></param>
+    internal static void Write(string str, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+        Console.Write(str);
+        Console.ResetColor();
     }
 }

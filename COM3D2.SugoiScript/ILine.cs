@@ -30,10 +30,9 @@ namespace COM3D2.ScriptTranslationTool
         public string ManualTranslation { get; set; }
 
         //Fields bellow are not saved as .json
-        [JsonIgnore]
-        public string FileName { get; set; }
-        [JsonIgnore]
-        public string Japanese { get; set; }
+        [JsonIgnore] public string FileName { get; set; }
+        [JsonIgnore] public string Japanese { get; set; }
+
         [JsonIgnore]
         public string English
         {
@@ -45,37 +44,34 @@ namespace COM3D2.ScriptTranslationTool
                     Color = ConsoleColor.Cyan;
                     return ManualTranslation;
                 }
+
                 if (!string.IsNullOrEmpty(OfficialTranslation) && !Program.isSafeExport)
                 {
                     Color = ConsoleColor.Green;
                     return OfficialTranslation;
                 }
+
                 if (!string.IsNullOrEmpty(MachineTranslation))
                 {
                     Color = ConsoleColor.DarkBlue;
                     return MachineTranslation;
                 }
 
-                Color= ConsoleColor.Red;
+                Color = ConsoleColor.Red;
                 return "";
             }
         }
-        [JsonIgnore]
-        public string FilePath { get; set; }
-        [JsonIgnore]
-        public string JapanesePrep { get; set; }
-        [JsonIgnore]
-        public ConsoleColor Color { get; set; }
-        [JsonIgnore]
-        public bool HasRepeat { get; set; } = false;
-        [JsonIgnore]
-        public bool HasError { get; set; } = false;
-        [JsonIgnore]
-        internal bool HasTag { get; set; } = false;
-        [JsonIgnore]
-        internal List<string> Tags { get; set; } = new List<string>();
 
-        internal ScriptLine(string fileName, string japanese, string official = "", string machine = "", string manual = "")
+        [JsonIgnore] public string FilePath { get; set; }
+        [JsonIgnore] public string JapanesePrep { get; set; }
+        [JsonIgnore] public ConsoleColor Color { get; set; }
+        [JsonIgnore] public bool HasRepeat { get; set; }
+        [JsonIgnore] public bool HasError { get; set; }
+        [JsonIgnore] internal bool HasTag { get; set; }
+        [JsonIgnore] internal List<string> Tags { get; set; } = [];
+
+        internal ScriptLine(string fileName, string japanese, string official = "", string machine = "",
+            string manual = "")
         {
             FilePath = fileName;
             FileName = Path.GetFileName(fileName);
@@ -86,39 +82,41 @@ namespace COM3D2.ScriptTranslationTool
         }
 
         [JsonConstructor]
-        internal ScriptLine() { }
+        internal ScriptLine()
+        {
+        }
 
         /// <summary>
         /// Preping Japanese for translation later
         /// </summary>
         private void PrepJapanese()
-        {            
+        {
             // check for name tags [HF], [HF2], ... 
             Regex rx = new Regex(@"\[.*?\]", RegexOptions.Compiled);
-            
+
             MatchCollection matches = rx.Matches(Japanese);
-            
+
             if (matches.Count > 0)
             {
                 foreach (Match match in matches)
                 {
                     Tags.Add(match.Groups[0].Value);
                 }
-            
+
                 JapanesePrep = Regex.Replace(Japanese, @"\[.*?\]", "MUKU");
-            
+
                 HasTag = true;
             }
             else
             {
                 JapanesePrep = Japanese;
             }
-            
+
             // for the rare lines having quotes
             JapanesePrep = JapanesePrep.Replace("\"", "\\\"");
-            
+
             // remove ♀ symbol because it messes up sugoi
-            JapanesePrep = JapanesePrep.Replace("♀", "");            
+            JapanesePrep = JapanesePrep.Replace("♀", "");
         }
 
         /// <summary>
@@ -176,7 +174,7 @@ namespace COM3D2.ScriptTranslationTool
         }
     }
 
-    internal class CsvLine : ILine
+    internal partial class CsvLine : ILine
     {
         public string OfficialTranslation { get; set; }
         public string MachineTranslation { get; set; }
@@ -184,19 +182,21 @@ namespace COM3D2.ScriptTranslationTool
         public string ChSimple { get; set; } = string.Empty;
         public string ChTraditional { get; set; } = string.Empty;
 
-        //Fields bellow are not saved as .json
-        [JsonIgnore]
-        public string FilePath { get; set; }
-        [JsonIgnore]
-        public string Key { get; set; }
-        [JsonIgnore]
-        public string Type { get; set; }
-        [JsonIgnore]
-        public string Description { get; set; }
-        [JsonIgnore]
-        public string Japanese { get; set; }
-        [JsonIgnore]
-        public string JapanesePrep { get; set; }
+        // Compile regexes at compile time
+        [GeneratedRegex(@"(?<word>\w+)(-(\k<word>)){5,}")]
+        private static partial Regex MatchWordRegex();
+
+        [GeneratedRegex(@"(\w)\1{15,}")]
+        private static partial Regex MatchCharRegex();
+
+        // Fields bellow are not saved as .json
+        [JsonIgnore] public string FilePath { get; set; }
+        [JsonIgnore] public string Key { get; set; }
+        [JsonIgnore] public string Type { get; set; }
+        [JsonIgnore] public string Description { get; set; }
+        [JsonIgnore] public string Japanese { get; set; }
+        [JsonIgnore] public string JapanesePrep { get; set; }
+
         [JsonIgnore]
         public string English
         {
@@ -208,12 +208,14 @@ namespace COM3D2.ScriptTranslationTool
                     Color = ConsoleColor.Cyan;
                     return ManualTranslation;
                 }
-                else if (!string.IsNullOrEmpty(OfficialTranslation))
+
+                if (!string.IsNullOrEmpty(OfficialTranslation))
                 {
                     Color = ConsoleColor.Green;
                     return OfficialTranslation;
                 }
-                else if (string.IsNullOrEmpty(MachineTranslation))
+
+                if (string.IsNullOrEmpty(MachineTranslation))
                 {
                     Color = ConsoleColor.DarkBlue;
                     return MachineTranslation;
@@ -223,16 +225,12 @@ namespace COM3D2.ScriptTranslationTool
                 return "";
             }
         }
-        [JsonIgnore]
-        public ConsoleColor Color { get; set; }
-        [JsonIgnore]
-        public bool HasRepeat { get; set; }
-        [JsonIgnore]
-        public bool HasError { get; set; }
-        [JsonIgnore]
-        public string[] Header { get; set; }
-        [JsonIgnore]
-        private readonly string[] matchString = new string[] {"|info", "|name" };
+
+        [JsonIgnore] public ConsoleColor Color { get; set; }
+        [JsonIgnore] public bool HasRepeat { get; set; }
+        [JsonIgnore] public bool HasError { get; set; }
+        [JsonIgnore] public string[] Header { get; set; }
+        [JsonIgnore] private readonly string[] _matchString = ["|info", "|name"];
 
         public CsvLine(string fileName, string[] header, string[] values)
         {
@@ -247,7 +245,7 @@ namespace COM3D2.ScriptTranslationTool
 
             /* I consider that if the Key contains |info / |name then the entry must be translated,
              * as it always seems to be the case. */
-            if (matchString.Any(Key.Contains))
+            if (_matchString.Any(Key.Contains))
                 OfficialTranslation = string.Empty;
 
 
@@ -258,9 +256,9 @@ namespace COM3D2.ScriptTranslationTool
             }
 
             //Some UI entries may contain \r, partially breaking the cache as a result...
-            if (Japanese.Contains("\r") || Japanese.Contains("\n"))
+            if (Japanese.Contains('\r') || Japanese.Contains('\n'))
             {
-                string preString = Japanese.Replace("\r", "");
+                var preString = Japanese.Replace("\r", "");
                 preString = preString.Replace("\n", "");
                 JapanesePrep = preString;
                 Japanese = preString;
@@ -270,9 +268,8 @@ namespace COM3D2.ScriptTranslationTool
         }
 
         /// <summary>
-        /// Clean all kind of reccurrent syntax error and put back any [HF] tag when needed
+        /// Clean all kind of recurrent syntax error and put back any [HF] tag when needed
         /// </summary>
-        /// <param name="line"></param>
         /// <returns></returns>
         internal void CleanPost()
         {
@@ -280,28 +277,24 @@ namespace COM3D2.ScriptTranslationTool
             MachineTranslation = MachineTranslation.Replace("<unk>", "");
 
             // check for repeating characters
-            Match matchChar = Regex.Match(MachineTranslation, @"(\w)\1{15,}");
+            var matchChar = MatchCharRegex().Match(MachineTranslation);
             if (matchChar.Success)
-                this.HasRepeat = true;
+                HasRepeat = true;
 
             // check for repating words
-            Match matchWord = Regex.Match(MachineTranslation, @"(?<word>\w+)(-(\k<word>)){5,}");
+            var matchWord = MatchWordRegex().Match(MachineTranslation);
             if (matchWord.Success)
-                this.HasRepeat = true;
+                HasRepeat = true;
 
             // check for server bad request
             if (MachineTranslation.Contains("400 Bad Request"))
-                this.HasError = true;
+                HasError = true;
         }
 
         public string ExportHeader()
         {
-            string headerString = "";
+            var headerString = Header.Aggregate("", (current, t) => $"{current},{t}");
 
-            for (int i = 0; i < Header.Length; i++)
-            {
-                headerString = $"{headerString},{Header[i]}";
-            }
             //remove first comma
             headerString = headerString.Remove(0, 1);
             //add eol
@@ -315,7 +308,7 @@ namespace COM3D2.ScriptTranslationTool
             string line;
 
             //Don't export faulty translations, also add quotes, even if they don't exist in the original csv.
-            if (HasError ||HasRepeat)
+            if (HasError || HasRepeat)
                 line = $"\"{Key}\",{Type},{Description},\"{Japanese}\",";
             else
                 line = $"\"{Key}\",{Type},{Description},\"{Japanese}\",\"{English}\"";
@@ -323,7 +316,7 @@ namespace COM3D2.ScriptTranslationTool
             if (Header.Length == 7)
                 line = $"{line},\"{ChSimple}\",\"{ChTraditional}\"";
 
-            return line ;
+            return line;
         }
 
         public void GetTranslation()

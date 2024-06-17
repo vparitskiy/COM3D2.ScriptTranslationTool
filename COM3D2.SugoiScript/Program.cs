@@ -10,22 +10,25 @@ namespace COM3D2.ScriptTranslationTool
     {
         internal static Dictionary<string, List<string>> subtitles = new Dictionary<string, List<string>>();
 
-        internal static string cacheFolder = @"Caches";
-        internal static string machineCacheFile = @"Caches/MachineTranslationCache.txt";
-        internal static string officialCacheFile = @"Caches/OfficialTranslationCache.txt";
-        internal static string officialSubtitlesCache = @"Caches/officialSubtitlesCache.txt";
-        internal static string manualCacheFile = @"Caches/ManualTranslationCache.txt";
-        internal static string archistoryFolder = @"Caches/ArcHistory";
-        internal static string errorFile = "Errors.txt";
-        internal const string jpCacheFile = "JpCache.json";
-        internal const char splitChar = '\t';
 
-        internal static string japaneseScriptFolder = @"Scripts/Japanese";
-        internal static string englishScriptFolder = @"Scripts/English";
-        internal static string translatedScriptFolder = @"Scripts/AlreadyTranslated";
-        internal static string japaneseUIFolder = @"UI/Japanese";
-        internal static string i18nExScriptFolder = @"Scripts/i18nEx/English/Script";
-        internal static string i18nExUIFolder = @"UI/i18nEx/English/UI";
+        internal static string appDirectory = Directory.GetCurrentDirectory();
+
+        internal static string cacheFolder = "Caches";
+        internal static string machineCacheFile = Path.Combine(appDirectory, "Caches", "MachineTranslationCache.txt");
+        internal static string officialCacheFile = Path.Combine(appDirectory, "Caches", "OfficialTranslationCache.txt");
+        internal static string officialSubtitlesCache = Path.Combine(appDirectory, "Caches", "officialSubtitlesCache.txt");
+        internal static string manualCacheFile = Path.Combine(appDirectory, "Caches", "ManualTranslationCache.txt");
+        internal static string archistoryFolder = Path.Combine(appDirectory, "Caches", "ArcHistory");
+        internal static string errorFile = "Errors.txt";
+        internal const string JpCacheFile = "JpCache.json";
+        internal const char SplitChar = '\t';
+
+        internal static string japaneseScriptFolder = Path.Combine(appDirectory, "Scripts", "Japanese");
+        internal static string englishScriptFolder = Path.Combine(appDirectory, "Scripts", "English");
+        internal static string translatedScriptFolder = Path.Combine(appDirectory, "Scripts", "AlreadyTranslated");
+        internal static string japaneseUIFolder = Path.Combine(appDirectory, "UI", "Japanese");
+        internal static string i18NExScriptFolder = Path.Combine(appDirectory, "Scripts", "i18nEx", "English", "Script");
+        internal static string i18NExUiFolder = Path.Combine(appDirectory, "UI", "i18nEx", "English", "UI");
 
 
         internal static string jpGameDataPath = "";
@@ -33,7 +36,7 @@ namespace COM3D2.ScriptTranslationTool
 
 
         internal static bool isSugoiRunning = false;
-        internal static bool exportToi18nEx = false;
+        internal static bool exportToi18NEx = false;
         internal static bool isSafeExport = true;
         internal static bool isExportBson = true;
         internal static bool moveFinishedRawScript = false;
@@ -42,13 +45,13 @@ namespace COM3D2.ScriptTranslationTool
         internal static bool isSourceEngGame = true;
         internal static bool isIgnoreCbl = true;
 
-        static void Main()
+        private static void Main()
         {
             Tools.GetConfig();
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            Console.OutputEncoding = Encoding.UTF8;
 
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.WriteLine("==================== Initialization ====================\n");
             Console.Title = "Initialization";
 
@@ -61,8 +64,9 @@ namespace COM3D2.ScriptTranslationTool
             if (moveFinishedRawScript)
                 Tools.MakeFolder(translatedScriptFolder);
 
-            int scriptsNb = Directory.EnumerateFiles(japaneseScriptFolder, "*.*", SearchOption.AllDirectories).Count(f => Path.GetExtension(f) == ".txt");
-            int UInb = Directory.EnumerateFiles(japaneseUIFolder, "*.csv", SearchOption.AllDirectories).Count();
+            var scriptsNb = System.IO.Directory.EnumerateFiles(japaneseScriptFolder, "*.*", SearchOption.AllDirectories)
+                .Count(f => Path.GetExtension(f) == ".txt");
+            var uInb = System.IO.Directory.EnumerateFiles(japaneseUIFolder, "*.csv", SearchOption.AllDirectories).Count();
 
 
             /*
@@ -79,9 +83,9 @@ namespace COM3D2.ScriptTranslationTool
             */
 
 
-            int officialCount = 0;
-            int manualCount = 0;
-            int machineCount = 0;
+            var officialCount = 0;
+            var manualCount = 0;
+            var machineCount = 0;
 
             Cache.LoadOfficialCache(ref officialCount);
             Cache.LoadManualCache(ref manualCount);
@@ -92,18 +96,20 @@ namespace COM3D2.ScriptTranslationTool
 
             if (officialCount > 0)
             {
-                Console.WriteLine($"Officialy Translated lines Loaded: {officialCount}");
+                Console.WriteLine($"Officially Translated lines Loaded: {officialCount}");
             }
+
             if (manualCount > 0)
             {
                 Console.WriteLine($"Manually Translated lines Loaded: {manualCount}");
             }
+
             if (machineCount > 0)
             {
                 Console.WriteLine($"Machine Translated lines Loaded: {machineCount}");
             }
 
-            Console.WriteLine("\n===================== Informations =====================");
+            Console.WriteLine("\n===================== Information =====================");
 
             Console.WriteLine("English translation will be selected in this order when available:");
             Tools.WriteLine("Manual Translation", ConsoleColor.Cyan);
@@ -120,8 +126,8 @@ namespace COM3D2.ScriptTranslationTool
             // Opening option menu loop
             OptionMenu();
 
-            int scriptCount = 0;
-            int lineCount = 0;
+            var scriptCount = 0;
+            var lineCount = 0;
 
             if (scriptsNb > 0 || isSourceJpGame)
                 ScriptTranslation.Process(ref scriptCount, ref lineCount);
@@ -134,7 +140,7 @@ namespace COM3D2.ScriptTranslationTool
                 Tools.WriteLine("Everything done, you may recover your scripts in Scripts\\i18nEx and copy them in your game folder.", ConsoleColor.Green);
             }
 
-            if (UInb > 0)
+            if (uInb > 0)
             {
                 Tools.WriteLine("\nEverything done, you may recover your UI files  in UI\\i18nEx and copy them in your game folder.", ConsoleColor.Green);
             }
@@ -145,14 +151,14 @@ namespace COM3D2.ScriptTranslationTool
 
         internal static void OptionMenu()
         {
-            ConsoleKeyInfo key = new ConsoleKeyInfo();
+            var key = new ConsoleKeyInfo();
 
             Console.WriteLine("\n===================== Options =====================");
             while (key.Key != ConsoleKey.Enter)
             {
                 if ((key.Key == ConsoleKey.D1) || (key.Key == ConsoleKey.NumPad1)) { isSourceJpGame = !isSourceJpGame; }
                 if ((key.Key == ConsoleKey.D2) || (key.Key == ConsoleKey.NumPad2)) { isSourceEngGame = !isSourceEngGame; }
-                if ((key.Key == ConsoleKey.D3) || (key.Key == ConsoleKey.NumPad3)) { exportToi18nEx = !exportToi18nEx; }
+                if ((key.Key == ConsoleKey.D3) || (key.Key == ConsoleKey.NumPad3)) { exportToi18NEx = !exportToi18NEx; }
                 if ((key.Key == ConsoleKey.D4) || (key.Key == ConsoleKey.NumPad4)) { isSafeExport = !isSafeExport; }
                 if ((key.Key == ConsoleKey.D5) || (key.Key == ConsoleKey.NumPad5)) { forcedTranslation = !forcedTranslation; }
                 if ((key.Key == ConsoleKey.D6) || (key.Key == ConsoleKey.NumPad6)) { isExportBson = !isExportBson; }
@@ -162,14 +168,22 @@ namespace COM3D2.ScriptTranslationTool
 
 
                 Console.ResetColor();
-                Console.Write($" 1. Japanese Script Source: "); Tools.WriteLine(isSourceJpGame ? "JP Game .arc" : "Script Folder", ConsoleColor.Blue);
-                Console.Write($" 2. English Script Source: "); Tools.WriteLine(isSourceEngGame ? "ENG Game .arc" : "Script Folder", ConsoleColor.Blue);
-                Console.Write($" 3. Export to i18nEx: "); Tools.WriteLine(exportToi18nEx.ToString(), ConsoleColor.Blue);
-                Console.Write($" 4. Export with official translation: "); Tools.WriteLine((!isSafeExport).ToString(), ConsoleColor.Blue);
-                Console.Write($" 5. Forced translation: "); Tools.WriteLine(forcedTranslation.ToString(), ConsoleColor.Blue);
-                Console.Write($" 6. Export as: "); Tools.WriteLine(isExportBson ? "A single .bson" : "Collection of .txt", ConsoleColor.Blue);
-                Console.Write($" 7. Build/Update the japanese cache. Source: "); Tools.WriteLine($"{(isSourceJpGame ? jpGameDataPath : japaneseScriptFolder)}", ConsoleColor.Blue);
-                Console.Write($" 8. Build/Update the official translation cache. Source: "); Tools.WriteLine($"{(isSourceEngGame ? engGameDataPath : englishScriptFolder)}", ConsoleColor.Blue);
+                Console.Write($" 1. Japanese Script Source: ");
+                Tools.WriteLine(isSourceJpGame ? "JP Game .arc" : "Script Folder", ConsoleColor.Blue);
+                Console.Write($" 2. English Script Source: ");
+                Tools.WriteLine(isSourceEngGame ? "ENG Game .arc" : "Script Folder", ConsoleColor.Blue);
+                Console.Write($" 3. Export to i18nEx: ");
+                Tools.WriteLine(exportToi18NEx.ToString(), ConsoleColor.Blue);
+                Console.Write($" 4. Export with official translation: ");
+                Tools.WriteLine((!isSafeExport).ToString(), ConsoleColor.Blue);
+                Console.Write($" 5. Forced translation: ");
+                Tools.WriteLine(forcedTranslation.ToString(), ConsoleColor.Blue);
+                Console.Write($" 6. Export as: ");
+                Tools.WriteLine(isExportBson ? "A single .bson" : "Collection of .txt", ConsoleColor.Blue);
+                Console.Write($" 7. Build/Update the japanese cache. Source: ");
+                Tools.WriteLine($"{(isSourceJpGame ? jpGameDataPath : japaneseScriptFolder)}", ConsoleColor.Blue);
+                Console.Write($" 8. Build/Update the official translation cache. Source: ");
+                Tools.WriteLine($"{(isSourceEngGame ? engGameDataPath : englishScriptFolder)}", ConsoleColor.Blue);
                 Console.Write($" 9. Translate UI .csv");
                 Console.Write("\nPress Numbers for options or Enter to start translating: ");
 
