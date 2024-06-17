@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Configuration;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace COM3D2.ScriptTranslationTool
 {
@@ -72,7 +71,7 @@ namespace COM3D2.ScriptTranslationTool
         /// </summary>
         internal static void GetConfig()
         {
-            if (File.Exists("COM3D2.ScriptTranslationTool.exe.config"))
+            if (File.Exists("COM3D2.ScriptTranslationTool.dll.config"))
             {
                 Program.machineCacheFile = ConfigurationManager.AppSettings.Get("MachineTranslationCache");
                 Program.officialCacheFile = ConfigurationManager.AppSettings.Get("OfficialTranslationCache");

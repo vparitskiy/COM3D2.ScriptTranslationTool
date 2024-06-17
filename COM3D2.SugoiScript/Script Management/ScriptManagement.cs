@@ -125,17 +125,17 @@ namespace COM3D2.ScriptTranslationTool
             {"ck_h_", "[Commands & Choices]"},
             {"ck_dance_", "[Commands & Choices]"},
             {"ck_cas_", "[Commands & Choices]"},
-            {"lifemode", "[Misc]\\Lifemode"},
-            {"idol", "[Misc]\\Idol"},
-            {"scout", "[Misc]\\Scout"},
-            {"npc", "[Misc]\\NPC"},
-            {"harem", "[Misc]\\Harem"},
-            {"yuri", "[Misc]\\Yuri"},
-            {"pj", "[Misc]\\Pajama Collab"},
-            {"cw", "[Misc]\\Camping Event"},
-            {"rehire", "[Misc]\\Extra Maids rehire"},
-            {"club_gp", "[Misc]\\GP01 Club route"},
-            {"xmas", "[Misc]\\Xmas"}
+            {"lifemode", "[Misc]/Lifemode"},
+            {"idol", "[Misc]/Idol"},
+            {"scout", "[Misc]/Scout"},
+            {"npc", "[Misc]/NPC"},
+            {"harem", "[Misc]/Harem"},
+            {"yuri", "[Misc]/Yuri"},
+            {"pj", "[Misc]/Pajama Collab"},
+            {"cw", "[Misc]/Camping Event"},
+            {"rehire", "[Misc]/Extra Maids rehire"},
+            {"club_gp", "[Misc]/GP01 Club route"},
+            {"xmas", "[Misc]/Xmas"}
         };
     }
 }

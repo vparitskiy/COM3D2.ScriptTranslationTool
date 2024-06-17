@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Text;
 
 namespace COM3D2.ScriptTranslationTool
 {
@@ -10,21 +11,21 @@ namespace COM3D2.ScriptTranslationTool
         internal static Dictionary<string, List<string>> subtitles = new Dictionary<string, List<string>>();
 
         internal static string cacheFolder = @"Caches";
-        internal static string machineCacheFile = @"Caches\MachineTranslationCache.txt";
-        internal static string officialCacheFile = @"Caches\OfficialTranslationCache.txt";
-        internal static string officialSubtitlesCache = @"Caches\officialSubtitlesCache.txt";
-        internal static string manualCacheFile = @"Caches\ManualTranslationCache.txt";
-        internal static string archistoryFolder = @"Caches\ArcHistory";
+        internal static string machineCacheFile = @"Caches/MachineTranslationCache.txt";
+        internal static string officialCacheFile = @"Caches/OfficialTranslationCache.txt";
+        internal static string officialSubtitlesCache = @"Caches/officialSubtitlesCache.txt";
+        internal static string manualCacheFile = @"Caches/ManualTranslationCache.txt";
+        internal static string archistoryFolder = @"Caches/ArcHistory";
         internal static string errorFile = "Errors.txt";
         internal const string jpCacheFile = "JpCache.json";
         internal const char splitChar = '\t';
 
-        internal static string japaneseScriptFolder = @"Scripts\Japanese";
-        internal static string englishScriptFolder = @"Scripts\English";
-        internal static string translatedScriptFolder = @"Scripts\AlreadyTranslated";
-        internal static string japaneseUIFolder = @"UI\Japanese";
-        internal static string i18nExScriptFolder = @"Scripts\i18nEx\English\Script";
-        internal static string i18nExUIFolder = @"UI\i18nEx\English\UI";
+        internal static string japaneseScriptFolder = @"Scripts/Japanese";
+        internal static string englishScriptFolder = @"Scripts/English";
+        internal static string translatedScriptFolder = @"Scripts/AlreadyTranslated";
+        internal static string japaneseUIFolder = @"UI/Japanese";
+        internal static string i18nExScriptFolder = @"Scripts/i18nEx/English/Script";
+        internal static string i18nExUIFolder = @"UI/i18nEx/English/UI";
 
 
         internal static string jpGameDataPath = "";
@@ -45,7 +46,9 @@ namespace COM3D2.ScriptTranslationTool
         {
             Tools.GetConfig();
 
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
             Console.WriteLine("==================== Initialization ====================\n");
             Console.Title = "Initialization";
 
