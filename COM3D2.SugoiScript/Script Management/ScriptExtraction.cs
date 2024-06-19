@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using CM3D2.Toolkit.Guest4168Branch.Arc;
 using Newtonsoft.Json;
 using ArcFileEntry = CM3D2.Toolkit.Guest4168Branch.Arc.Entry.ArcFileEntry;
@@ -23,6 +22,14 @@ namespace COM3D2.ScriptTranslationTool
             if(!isSourceEngGame) { Cache.BuildOfficial(); Program.OptionMenu(); }
 
             Console.Title = "Extracting ENG Scripts";
+
+            if (string.IsNullOrEmpty(Program.engGameDataPath))
+            {
+                Tools.WriteLine("English game install path isn't set, please enter it.", ConsoleColor.Yellow);
+                Tools.Write("COM3D2.exe path:", ConsoleColor.White);
+                string path = Console.ReadLine();
+                Program.engGameDataPath = Path.Combine(path, "GameData");
+            }
 
             //Don't bother if the GameData can't be found
             if (!Directory.Exists(Program.engGameDataPath))
@@ -198,6 +205,14 @@ namespace COM3D2.ScriptTranslationTool
 
             Console.Title = "Extracting JP Scripts";
 
+            if (string.IsNullOrEmpty(Program.jpGameDataPath))
+            {
+                Tools.WriteLine("Japanese game install path isn't set, please enter it.", ConsoleColor.Yellow);
+                Tools.Write("COM3D2.exe path:", ConsoleColor.White);
+                string path = Console.ReadLine();
+                Program.jpGameDataPath = Path.Combine(path, "GameData");
+            }
+
             //Don't bother if the GameData can't be found
             if (!Directory.Exists(Program.jpGameDataPath))
             {
@@ -300,7 +315,6 @@ namespace COM3D2.ScriptTranslationTool
             Tools.WriteLine($"{newLines} new/updated lines in {newScripts} new/updated scripts\n\n", ConsoleColor.Green);
         }
     } 
-
 
     internal class ScriptFile
     {
@@ -513,7 +527,7 @@ namespace COM3D2.ScriptTranslationTool
 
             Tools.MakeFolder(Path.Combine(Program.cacheFolder, "Subtitles"));
             string path = $"{Path.Combine(Program.cacheFolder, "Subtitles", Path.GetFileNameWithoutExtension(Name))}.txt";
-            string[] formatedSubs = Subs.Where(s => string.IsNullOrEmpty(s.original) || string.IsNullOrEmpty(s.translation))
+            string[] formatedSubs = Subs.Where(s => !string.IsNullOrEmpty(s.original) || !string.IsNullOrEmpty(s.translation))
                                         .Select(s => $"@VoiceSubtitle{JsonConvert.SerializeObject(s)}")
                                         .ToArray();
 
