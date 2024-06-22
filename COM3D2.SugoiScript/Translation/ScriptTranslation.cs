@@ -100,7 +100,7 @@ namespace COM3D2.ScriptTranslationTool
 
                 if (Program.isExportBson)
                 {
-                    BsonDictionary.Add(filename,Encoding.UTF8.GetBytes(concatStrings.ToString()));
+                    BsonDictionary.Add(Path.GetFileNameWithoutExtension(filename), Encoding.UTF8.GetBytes(concatStrings.ToString()));
                 }
 
                 AlreadyParsedScripts.Add(filename);
@@ -126,13 +126,18 @@ namespace COM3D2.ScriptTranslationTool
 
                         if (Program.isExportBson)
                         {
-                            if (BsonDictionary.ContainsKey(subFileName))
+                            var bytes = File.ReadAllBytes(subFile);
+
+                            if(bytes.Length > 0)
                             {
-                                BsonDictionary[subFileName] = BsonDictionary[subFileName].Concat(File.ReadAllBytes(subFile)).ToArray();
-                            }
-                            else
-                            {
-                                BsonDictionary.Add(subFile, File.ReadAllBytes(subFile));
+                                if (BsonDictionary.ContainsKey(subFileName))
+                                {
+                                    BsonDictionary[subFileName] = BsonDictionary[subFileName].Concat(bytes).ToArray();
+                                }
+                                else
+                                {
+                                    BsonDictionary.Add(subFileName, bytes);
+                                }
                             }
                         }
                         else

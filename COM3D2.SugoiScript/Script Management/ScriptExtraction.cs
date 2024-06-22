@@ -27,6 +27,14 @@ namespace COM3D2.ScriptTranslationTool
 
             Console.Title = "Extracting ENG Scripts";
 
+            if (string.IsNullOrEmpty(Program.engGameDataPath))
+            {
+                Tools.WriteLine("English game install path isn't set, please enter it.", ConsoleColor.Yellow);
+                Tools.Write("COM3D2.exe path:", ConsoleColor.White);
+                var path = Console.ReadLine();
+                Program.engGameDataPath = Path.Combine(path, "GameData");
+            }
+
             //Don't bother if the GameData can't be found
             if (!Directory.Exists(Program.engGameDataPath))
             {
@@ -137,6 +145,14 @@ namespace COM3D2.ScriptTranslationTool
             }
 
             Console.Title = "Extracting JP Scripts";
+
+            if (string.IsNullOrEmpty(Program.jpGameDataPath))
+            {
+                Tools.WriteLine("Japanese game install path isn't set, please enter it.", ConsoleColor.Yellow);
+                Tools.Write("COM3D2.exe path:", ConsoleColor.White);
+                var path = Console.ReadLine();
+                Program.jpGameDataPath = Path.Combine(path, "GameData");
+            }
 
             //Don't bother if the GameData can't be found
             if (!Directory.Exists(Program.jpGameDataPath))
@@ -443,7 +459,7 @@ namespace COM3D2.ScriptTranslationTool
 
             Tools.MakeFolder(Path.Combine(Program.cacheFolder, "Subtitles"));
             var path = $"{Path.Combine(Program.cacheFolder, "Subtitles", Path.GetFileNameWithoutExtension(Name)!)}.txt";
-            var formatedSubs = Subs.Where(s => string.IsNullOrEmpty(s.Original) || string.IsNullOrEmpty(s.Translation))
+            var formatedSubs = Subs.Where(s => !string.IsNullOrEmpty(s.Original) || !string.IsNullOrEmpty(s.Translation))
                 .Select(s => $"@VoiceSubtitle{JsonConvert.SerializeObject(s)}")
                 .ToArray();
             

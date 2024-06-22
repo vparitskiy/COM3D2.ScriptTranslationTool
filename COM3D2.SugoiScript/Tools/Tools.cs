@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using Microsoft.Win32;
 
 namespace COM3D2.ScriptTranslationTool;
 
@@ -84,9 +85,19 @@ internal static class Tools
 
         Program.moveFinishedRawScript = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("MoveTranslated"));
         Program.exportToi18NEx = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("ExportToi18nEx"));
+        
+        // Getting GameData path Setting > Registry > Ask
+        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings.Get("JPGamePath")))
+        {
+            var path = Path.Combine(ConfigurationManager.AppSettings.Get("JPGamePath"),"GameData");
+            Program.jpGameDataPath = GetAbsolutePath(path);
+        }
 
-        Program.jpGameDataPath = GetAbsolutePath(ConfigurationManager.AppSettings.Get("JPGamePath"));
-        Program.engGameDataPath = GetAbsolutePath(ConfigurationManager.AppSettings.Get("ENGGamePath"));
+        if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings.Get("ENGGamePath")))
+        {
+            var path = Path.Combine(ConfigurationManager.AppSettings.Get("ENGGamePath"), "GameData");
+            Program.engGameDataPath = GetAbsolutePath(path);
+        }
     }
 
     private static string GetAbsolutePath(string path)
