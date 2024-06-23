@@ -33,7 +33,7 @@ namespace COM3D2.ScriptTranslationTool
 
         internal static bool isSugoiRunning = false;
         internal static bool exportToi18nEx = false;
-        internal static bool isSafeExport = true;
+        internal static bool isSafeExport = false;
         internal static bool isExportBson = true;
         internal static bool moveFinishedRawScript = false;
         internal static bool forcedTranslation = false;

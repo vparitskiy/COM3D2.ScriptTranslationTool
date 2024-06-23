@@ -62,7 +62,9 @@ namespace COM3D2.ScriptTranslationTool
                 }
             }
 
-            string path = Path.Combine(Program.i18nExScriptFolder, folder, line.FilePath);
+            string fileName = $"{Path.GetFileNameWithoutExtension(line.FilePath)}.txt";
+
+            string path = Path.Combine(Program.i18nExScriptFolder, folder, fileName);
             File.AppendAllText(path, savedString);
         }
 

@@ -23,9 +23,9 @@ namespace COM3D2.ScriptTranslationTool
 
             Console.Title = "Extracting ENG Scripts";
 
-            if (string.IsNullOrEmpty(Program.engGameDataPath))
+            if (string.IsNullOrEmpty(Program.engGameDataPath) || !Directory.Exists(Program.engGameDataPath))
             {
-                Tools.WriteLine("English game install path isn't set, please enter it.", ConsoleColor.Yellow);
+                Tools.WriteLine("English game install path isn't set or is wrong, please enter it.", ConsoleColor.Yellow);
                 Tools.Write("COM3D2.exe path:", ConsoleColor.White);
                 string path = Console.ReadLine();
                 Program.engGameDataPath = Path.Combine(path, "GameData");
@@ -51,71 +51,6 @@ namespace COM3D2.ScriptTranslationTool
                     arcHistoryENG = Cache.LoadJson(arcHistoryENG, arcHistoryJson);
                 }
             }
-
-             /* Old force rebuilt method                           
-
-             //Always force a rebuilt if the cache is missing
-             bool rebuild = !File.Exists(Program.officialCacheFile);
-
-             //Ask if the user wants to force a rebuild anyway
-             if (!rebuild)
-             {
-                 Console.WriteLine("\n===================== Extraction =====================");
-
-                 Console.WriteLine("\nFor a faster extraction the built-in extractor only checks for new or updated .arc.");
-                 Console.WriteLine("Forcing a complete rebuilt will make a completely new cache.");
-                 Console.Write("Do you want to force a complete rebuild ? (Y/N): ");
-
-                 ConsoleKeyInfo key;
-                 key = Console.ReadKey();
-
-                 while (key.Key == ConsoleKey.Y || key.Key == ConsoleKey.N)
-                 {
-                     if (key.Key == ConsoleKey.Y) 
-                     {
-                         Console.WriteLine("Rebuilt = true");
-                         rebuild = true; 
-                         break;
-                     }
-                     if (key.Key == ConsoleKey.N)
-                     {
-                         Console.WriteLine("Rebuilt = false");
-                         rebuild = false;
-                         break;
-                     }
-
-                     key = Console.ReadKey();
-                 }
-             }
-
-             string arcHistoryJson = Path.Combine(Program.archistoryFolder, engArchistoryFile);
-
-             //Load history or wipe if forced rebuild
-             if (File.Exists(arcHistoryJson) && !rebuild)
-             {
-                 Console.WriteLine("\nLoading extraction history");
-                 arcHistory = Cache.LoadJson(arcHistory, arcHistoryJson);
-                 shortOfficialCache = File.ReadAllLines(Program.officialCacheFile).ToHashSet();
-                 Tools.WriteLine($"{shortOfficialCache.Count} lines already cached", ConsoleColor.Green);
-             }
-             else
-             {
-                 try
-                 {
-                     File.Delete(Program.officialCacheFile);
-                 }
-                 catch (Exception ex)
-                 {
-                     Tools.WriteLine($"The old Official Translation cache can't be deleted! \nAborting Extraction", ConsoleColor.Red);
-                     Tools.WriteLine(ex.Message, ConsoleColor.Red);
-                     Program.OptionMenu();
-                 }
-
-                 shortOfficialCache.Clear();
-                 arcHistory.Clear();
-             }
-             */
-
 
             int startingLineNb = shortOfficialCache.Count;
             int newScripts = 0;

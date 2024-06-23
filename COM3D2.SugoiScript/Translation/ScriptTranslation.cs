@@ -137,10 +137,10 @@ namespace COM3D2.ScriptTranslationTool
                 {
                     foreach (string subFile in subtitlesFiles)
                     {
-                        string subFileName = $"{Path.GetFileNameWithoutExtension(subFile)}";
 
                         if (Program.isExportBson)
                         {
+                            string subFileName = $"{Path.GetFileNameWithoutExtension(subFile)}";
                             var bytes = File.ReadAllBytes(subFile);
 
                             if(bytes.Length > 0)
@@ -157,7 +157,9 @@ namespace COM3D2.ScriptTranslationTool
                         }
                         else
                         {
+                            string subFileName = $"{Path.GetFileName(subFile)}";
                             string[] scriptFile = Directory.GetFiles(Program.i18nExScriptFolder, subFileName, SearchOption.AllDirectories);
+
                             if (scriptFile.Length > 0)
                             {
                                 Tools.WriteLine($"Adding subtitles to {subFileName}.", ConsoleColor.Green);
@@ -182,7 +184,7 @@ namespace COM3D2.ScriptTranslationTool
 
             if (Program.exportToi18nEx && Program.isExportBson)
             {
-                Tools.WriteLine("Saving script as .bson.", ConsoleColor.Magenta);
+                Tools.WriteLine("\nSaving script as .bson.", ConsoleColor.Magenta);
                 string bsonPath = Path.Combine(Program.i18nExScriptFolder, "script.bson");
                 Cache.SaveBson(bsonDictionarry, bsonPath);
             }

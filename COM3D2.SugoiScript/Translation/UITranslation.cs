@@ -31,6 +31,7 @@ namespace COM3D2.ScriptTranslationTool
                     if (String.IsNullOrWhiteSpace(currentLine.Japanese))
                         continue;
 
+                    /*
                     //recover translation cache
                     if (Cache.csvCache.ContainsKey(currentLine.Japanese))
                     {
@@ -40,32 +41,29 @@ namespace COM3D2.ScriptTranslationTool
                         currentLine.ChTraditional = Cache.csvCache[currentLine.Japanese].ChTraditional;
                         currentLine.ChSimple = Cache.csvCache[currentLine.Japanese].ChSimple;
                     }
+                    */
 
                     Console.Write(currentLine.Japanese);
                     Tools.Write(" => ", ConsoleColor.Yellow);
-
-                    // recover translation from caches
-                    // if (string.IsNullOrEmpty(currentLine.English))
-                    //    Cache.Get(currentLine);
 
                     //Translate if needed/possible
                     if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
                     {
                         currentLine.GetTranslation();
+
+                        //ignore faulty returns
+                        if (currentLine.HasRepeat || currentLine.HasError)
+                        {
+                            Cache.AddToError(currentLine);
+                            Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
+                            continue;
+                        }
                     }
                     else if (string.IsNullOrEmpty(currentLine.English))
                     {
                         Tools.WriteLine($"This line wasn't found in any cache and can't be translated since sugoi isn't running", ConsoleColor.Red);
                         continue;
-                    }
-
-                    //ignore faulty returns
-                    if (currentLine.HasRepeat || currentLine.HasError)
-                    {
-                        Cache.AddToError(currentLine);
-                        Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
-                        continue;
-                    }                  
+                    }               
 
 
                     Tools.WriteLine(currentLine.English, currentLine.Color);
