@@ -185,6 +185,7 @@ namespace COM3D2.ScriptTranslationTool
             if (Program.exportToi18nEx && Program.isExportBson)
             {
                 Tools.WriteLine("\nSaving script as .bson.", ConsoleColor.Magenta);
+                Tools.MakeFolder(Program.i18nExScriptFolder);
                 string bsonPath = Path.Combine(Program.i18nExScriptFolder, "script.bson");
                 Cache.SaveBson(bsonDictionarry, bsonPath);
             }
