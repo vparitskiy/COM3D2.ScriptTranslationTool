@@ -60,10 +60,17 @@ namespace COM3D2.ScriptTranslationTool
                 {
                     ScriptLine currentLine;
 
-                    if (Cache.scriptCache.ContainsKey(line))
-                        currentLine = Cache.scriptCache[line];
+                    if (Cache.scriptCache.ContainsKey(line.Trim()))
+                    {
+                        Console.WriteLine("EXISTING LINE");
+                        currentLine = Cache.scriptCache[line.Trim()];
+                    }                        
                     else
+                    {
+                        Console.WriteLine("NEW LINE");
                         currentLine = new ScriptLine(filename, line);
+                    }
+                        
 
                     lineCount++;
 
@@ -75,20 +82,23 @@ namespace COM3D2.ScriptTranslationTool
 
 
                     //Translate if needed/possible
-                    if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
+                    if (Program.isSugoiRunning)
                     {
-                        currentLine.GetTranslation();
-
-                        //ignore faulty returns
-                        if (currentLine.HasRepeat || currentLine.HasError)
+                        if (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation)))
                         {
-                            hasError = true;
-                            Cache.AddToError(currentLine);
-                            Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
-                            continue;
-                        }
+                            currentLine.GetTranslation();
 
-                        Cache.AddToMachineCache(currentLine);
+                            //ignore faulty returns
+                            if (currentLine.HasRepeat || currentLine.HasError)
+                            {
+                                hasError = true;
+                                Cache.AddToError(currentLine);
+                                Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
+                                continue;
+                            }
+
+                            Cache.AddToMachineCache(currentLine);
+                        }
                     }
                     else if (string.IsNullOrEmpty(currentLine.English))
                     {
@@ -105,7 +115,7 @@ namespace COM3D2.ScriptTranslationTool
                     if (Program.exportToi18nEx)
                     {
                         if (Program.isExportBson)
-                            concatStrings.AppendLine($"{currentLine.Japanese}\t{currentLine.English}");                        
+                            concatStrings.AppendLine($"{currentLine.Japanese}\t{currentLine.English}".Trim());                        
                         else
                             ScriptManagement.AddTo(currentLine);
                     }
@@ -115,7 +125,7 @@ namespace COM3D2.ScriptTranslationTool
 
                 if (Program.isExportBson)
                 {
-                    bsonDictionarry.Add(Path.GetFileNameWithoutExtension(filename),Encoding.UTF8.GetBytes(concatStrings.ToString()));
+                    bsonDictionarry.Add($"{Path.GetFileNameWithoutExtension(filename)}.txt",Encoding.GetEncoding(932).GetBytes(concatStrings.ToString().Trim()));
                 }
 
                 alreadyParsedScripts.Add(filename);
@@ -208,6 +218,11 @@ namespace COM3D2.ScriptTranslationTool
                     Tools.WriteLine($"{jpCache.Count} scripts cached", ConsoleColor.Green);
 
                     scripts = jpCache.Keys.ToList();
+                }
+                else
+                {
+                    Console.WriteLine("Jp cache not found.");
+
                 }
             }
             else

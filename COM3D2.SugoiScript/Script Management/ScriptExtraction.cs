@@ -105,7 +105,13 @@ namespace COM3D2.ScriptTranslationTool
                         else if (script.Lines[i].StartsWith("@ChoicesSet", StringComparison.InvariantCultureIgnoreCase))
                         {
                             script.CaptureChoice(i);
-                        } 
+                        }
+
+                        //Yotogi Message is a new kind of text found only in Yotigi+ scripts
+                        else if (script.Lines[i].StartsWith("@YotogiMessage", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            script.CaptureYotogiMessage(i);
+                        }
                     }
 
                     scriptScannedNb++;
@@ -218,6 +224,12 @@ namespace COM3D2.ScriptTranslationTool
                         else if (script.Lines[i].StartsWith("@ChoicesSet", StringComparison.InvariantCultureIgnoreCase))
                         {
                             script.CaptureChoice(i);
+                        }
+
+                        //Yotogi Message is a new kind of text found only in Yotigi+ scripts
+                        else if (script.Lines[i].StartsWith("@YotogiMessage", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            script.CaptureYotogiMessage(i);
                         }
                     }
 
@@ -418,6 +430,18 @@ namespace COM3D2.ScriptTranslationTool
                     Talks.Add(line);
                 }
                 */
+            }
+        }
+
+        internal void CaptureYotogiMessage(int i)
+        {
+            //getting text with regex this time as it's nested in "quotes"
+            if (Lines[i].ToLower().Contains("text="))
+            {
+                Match match = Regex.Match(Lines[i], @"text=""(.*?)""");
+
+                var line = SplitTranslation(match.Groups[1].Value);
+                Talks.Add(line);
             }
         }
 
