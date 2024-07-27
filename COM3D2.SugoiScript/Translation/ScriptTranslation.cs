@@ -48,7 +48,17 @@ namespace COM3D2.ScriptTranslationTool
 
                 foreach (var line in lines.Select(l => l.Trim()))
                 {
-                    var currentLine = Cache.ScriptCache.TryGetValue(line, out var value) ? value : new ScriptLine(filename, line);
+                    ScriptLine currentLine;
+                    if (Cache.ScriptCache.ContainsKey(line.Trim()))
+                    {
+                        Console.WriteLine("EXISTING LINE");
+                        currentLine = Cache.ScriptCache[line.Trim()];
+                    }                        
+                    else
+                    {
+                        Console.WriteLine("NEW LINE");
+                        currentLine = new ScriptLine(filename, line);
+                    }
 
                     lineCount++;
 
@@ -90,7 +100,7 @@ namespace COM3D2.ScriptTranslationTool
                     if (Program.exportToi18NEx)
                     {
                         if (Program.isExportBson)
-                            concatStrings.AppendLine($"{currentLine.Japanese}\t{currentLine.English}");                        
+                            concatStrings.AppendLine($"{currentLine.Japanese}\t{currentLine.English}".Trim());                        
                         else
                             ScriptManagement.AddTo(currentLine);
                     }
@@ -100,7 +110,7 @@ namespace COM3D2.ScriptTranslationTool
 
                 if (Program.isExportBson)
                 {
-                    BsonDictionary.Add(Path.GetFileNameWithoutExtension(filename), Encoding.UTF8.GetBytes(concatStrings.ToString()));
+                    BsonDictionary.Add(Path.GetFileNameWithoutExtension(filename), Encoding.UTF8.GetBytes(concatStrings.ToString().Trim()));
                 }
 
                 AlreadyParsedScripts.Add(filename);
@@ -192,6 +202,11 @@ namespace COM3D2.ScriptTranslationTool
                     Tools.WriteLine($"{_jpCache.Count} scripts cached", ConsoleColor.Green);
 
                     scripts = _jpCache.Keys.ToList();
+                }
+                else
+                {
+                    Console.WriteLine("Jp cache not found.");
+
                 }
             }
             else

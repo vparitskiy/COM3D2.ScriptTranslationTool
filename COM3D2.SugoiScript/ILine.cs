@@ -209,13 +209,13 @@ namespace COM3D2.ScriptTranslationTool
                     return ManualTranslation;
                 }
 
-                if (!string.IsNullOrEmpty(OfficialTranslation))
+                if (!string.IsNullOrEmpty(OfficialTranslation) && !Program.isSafeExport)
                 {
                     Color = ConsoleColor.Green;
                     return OfficialTranslation;
                 }
 
-                if (string.IsNullOrEmpty(MachineTranslation))
+                if (!string.IsNullOrEmpty(MachineTranslation))
                 {
                     Color = ConsoleColor.DarkBlue;
                     return MachineTranslation;

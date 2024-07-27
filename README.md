@@ -4,22 +4,38 @@ Unlike [Translation Manager](https://github.com/Pain-Brioche/COM3D2.TranslationM
 This is the exact same I used for the translation pack.
 
 It can:
-- Support Official translation and cache for later use.
+- Extract/Update Japanese scripts directly from the JP game, no more messing with thousands of small text files
+- Extract/Update Official translation directly from the ENG game
+- Old method with TranslationExtract.dll is still an option.
+- Support Official translation and cache for later use
 - Support manual translation.
 - Support new translation via Sugoi Translator.
 - Reconstruct, translate and sort Japanese scripts from cached translations.
 - Merge Japanese and Official translations.
 - Merge scripts with the same name.
+- Translate I2Translation .csv (for technical reasons those still need to be extracted frrom within the game)
 
 
 ## Basic instructions.
 
-- You need .Net framework 4.8 (you probably already have it if you keep your system updated).  
-- Place your Japanese extracted scripts in ``Scripts\Japanese\``
-- Place (if you have one) your English extracted scripts in ``Scripts\English\``
-- Start the program and follow the instructions on screen.  
-**When working with COM3D2 scripts you're dealing with tens of thousands of script files and more than 650.000 translated lines!  
-This takes time, be patient!**
+- You need .Net framework 4.8 (you probably already have it if you keep your system updated).
+- (Optional) Place your Japanese extracted scripts in ``Scripts\Japanese\``
+- (Optional) Place your English extracted scripts in ``Scripts\English\``
+- Start the program and follow the instructions on screen.
+- If your registry entries for the game are correct, the program will use those, alternatively you can set your games path in the config file or wait for the program to ask for it.
+
+### Program menu:
+- 1 & 2 Switch to your script source of choice for the JP/ENG game.
+- 3 Wether or not the program will export an i18nEx compatible output (only useful when you only care about translating.
+- 4 Self explanatory.
+- 5 Force translation even if an official or manual line exists.
+- 6 Export format:  
+   .bson (recommended) newly supported by i18nEx much faster to load and less strain on your drive since it's a single file.
+   .txt Thousands of small .txt files, only recommended if you want to edit the files manually.
+  **When working with COM3D2 scripts you're dealing with tens of thousands of script files and more than 650.000 translated lines! This takes time, be patient!**
+- 7 & 8 Create or Update the translation caches using the settings set in 1 & 2.
+- 9 Translate UI .csv (fringe case you'll probably never use this). 
+
 
 
 ## Why merge Machine and Official Translations
@@ -41,11 +57,11 @@ Using a dedupe software isn't a bad solution in itself, you just won't be sure w
 ## How to merge Machine and Official Translations
 **You do not need the translated pack, everything is already included in the tool Cache folder**
 - Extract the Japanese **AND** English scripts from your games.  
-[How to Extract Scripts](https://github.com/ghorsington/COM3D2.i18nEx#extracting-translations-from-the-english-game)
-- Put the Japanese scripts in ``Scripts\Japanese\``
-- Put the English scripts in ``Scripts\English\``
-- Run the tool, it will start by building an official cache.
-- Wait for it to finish loading (remember dealing with thousands of files takes time) and press any key when asked too.
+- (Optional) Put the Japanese scripts in ``Scripts\Japanese\``
+- (Optional) Put the English scripts in ``Scripts\English\``
+- Run the tool
+- Build/Update your cache using the 7/8 options.
+- Presss Enter to begin the process.
 - Wait for it to finish and grab your merged script from ``Scripts\i18nEx\``
 
 ## How to add/edit translations
