@@ -61,23 +61,16 @@ namespace COM3D2.ScriptTranslationTool
                     break;
                 }
             }
-
-            string path = Path.Combine(Program.i18NExScriptFolder, folder, line.FilePath);
+            
+            var fileName = $"{Path.GetFileNameWithoutExtension(line.FilePath)}.txt";
+            var path = Path.Combine(Program.i18NExScriptFolder, folder, fileName);
             File.AppendAllText(path, savedString);
         }
 
         internal static void MoveFinished(string file, bool hasError)
         {
-            string endPath;
-            string path = file.Substring(file.IndexOf("Japanese"));
-            if (hasError)
-            {
-                endPath = Path.Combine(Program.translatedScriptFolder, "[ERROR]", path);
-            }
-            else
-            {
-                endPath = Path.Combine(Program.translatedScriptFolder, path);
-            }
+            var path = file[file.IndexOf("Japanese", StringComparison.Ordinal)..];
+            var endPath = hasError ? Path.Combine(Program.translatedScriptFolder, "[ERROR]", path) : Path.Combine(Program.translatedScriptFolder, path);
 
             Tools.MakeFolder(Path.GetDirectoryName(endPath));
 

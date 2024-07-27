@@ -116,43 +116,44 @@ namespace COM3D2.ScriptTranslationTool
             // Adding back subtitles
             if (Directory.Exists(Path.Combine(Program.cacheFolder, "Subtitles")) && Program.exportToi18NEx)
             {
-                IEnumerable<string> subtitlesFiles = Directory.EnumerateFiles(Path.Combine(Program.cacheFolder, "Subtitles"));
+                var subtitlesFiles = Directory.EnumerateFiles(Path.Combine(Program.cacheFolder, "Subtitles"));
 
-                if (subtitlesFiles.Any())
+                var subtitlesFilesList = subtitlesFiles.ToList();
+                if (subtitlesFilesList.Count != 0)
                 {
-                    foreach (string subFile in subtitlesFiles)
+                    foreach (var subFile in subtitlesFilesList)
                     {
-                        string subFileName = Path.GetFileName(subFile);
+                        
 
                         if (Program.isExportBson)
+                            
                         {
+                            var subFileName = $"{Path.GetFileNameWithoutExtension(subFile)}";
                             var bytes = File.ReadAllBytes(subFile);
-
-                            if(bytes.Length > 0)
+                            if (bytes.Length <= 0) continue;
+                            if (BsonDictionary.TryGetValue(subFileName, out var value))
                             {
-                                if (BsonDictionary.ContainsKey(subFileName))
-                                {
-                                    BsonDictionary[subFileName] = BsonDictionary[subFileName].Concat(bytes).ToArray();
-                                }
-                                else
-                                {
-                                    BsonDictionary.Add(subFileName, bytes);
-                                }
+                                BsonDictionary[subFileName] = value.Concat(bytes).ToArray();
+                            }
+                            else
+                            {
+                                BsonDictionary.Add(subFileName, bytes);
                             }
                         }
                         else
                         {
-                            string[] scriptFile = Directory.GetFiles(Program.i18NExScriptFolder, subFileName, SearchOption.AllDirectories);
+                            var subFileName = $"{Path.GetFileName(subFile)}";
+                            var scriptFile = Directory.GetFiles(Program.i18NExScriptFolder, subFileName, SearchOption.AllDirectories);
                             if (scriptFile.Length > 0)
                             {
                                 Tools.WriteLine($"Adding subtitles to {subFileName}.", ConsoleColor.Green);
-                                string[] strings = File.ReadAllLines(subFile);
+                                var strings = File.ReadAllLines(subFile);
                                 File.AppendAllLines(scriptFile[0], strings);
                             }
                             else
                             {
                                 Tools.WriteLine($"Creating new subtitle script {subFileName}", ConsoleColor.Green);
-                                string subPath = Path.Combine(Program.i18NExScriptFolder, "[Subtitles]");
+                                var subPath = Path.Combine(Program.i18NExScriptFolder, "[Subtitles]");
                                 Tools.MakeFolder(subPath);
                                 File.Copy(subFile, Path.Combine(subPath, subFileName));
                             }
@@ -167,8 +168,9 @@ namespace COM3D2.ScriptTranslationTool
 
             if (Program.exportToi18NEx && Program.isExportBson)
             {
-                Tools.WriteLine("Saving script as .bson.", ConsoleColor.Magenta);
-                string bsonPath = Path.Combine(Program.i18NExScriptFolder, "script.bson");
+                Tools.WriteLine("\nSaving script as .bson.", ConsoleColor.Magenta);
+                Tools.MakeFolder(Program.i18NExScriptFolder);
+                var bsonPath = Path.Combine(Program.i18NExScriptFolder, "script.bson");
                 Cache.SaveBson(BsonDictionary, bsonPath);
             }
         }
@@ -181,7 +183,7 @@ namespace COM3D2.ScriptTranslationTool
 
             if (Program.isSourceJpGame)
             {
-                string jpCachePath = Path.Combine(Program.cacheFolder, Program.JpCacheFile);
+                var jpCachePath = Path.Combine(Program.cacheFolder, Program.JpCacheFile);
 
                 if (File.Exists(jpCachePath))
                 {
@@ -203,7 +205,7 @@ namespace COM3D2.ScriptTranslationTool
 
         private static List<string> GetLines(string filename)
         {
-            List<string> lines = new List<string>();
+            var lines = new List<string>();
 
             if (Program.isSourceJpGame)
             {
@@ -212,10 +214,10 @@ namespace COM3D2.ScriptTranslationTool
             else
             {
                 //Load all scripts with the same name
-                string[] sameNameScripts = _scriptFiles.Where(f => Path.GetFileName(f) == filename).ToArray();
+                var sameNameScripts = _scriptFiles.Where(f => Path.GetFileName(f) == filename).ToArray();
 
                 //merge them as one without duplicated lines.
-                foreach (string s in sameNameScripts)
+                foreach (var s in sameNameScripts)
                 {
                     lines.AddRange(File.ReadAllLines(s));
                 }

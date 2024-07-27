@@ -27,12 +27,12 @@ namespace COM3D2.ScriptTranslationTool
 
             Console.Title = "Extracting ENG Scripts";
 
-            if (string.IsNullOrEmpty(Program.engGameDataPath))
+            if (string.IsNullOrEmpty(Program.engGameDataPath) || !Directory.Exists(Program.engGameDataPath))
             {
                 Tools.WriteLine("English game install path isn't set, please enter it.", ConsoleColor.Yellow);
                 Tools.Write("COM3D2.exe path:", ConsoleColor.White);
                 var path = Console.ReadLine();
-                Program.engGameDataPath = Path.Combine(path, "GameData");
+                Program.engGameDataPath = Path.Combine(path!, "GameData");
             }
 
             //Don't bother if the GameData can't be found
