@@ -36,11 +36,20 @@ internal static class Cache
         {
             count++;
 
-            if (line.StartsWith(@"//")) { continue; }
-            if (string.IsNullOrEmpty(line)) { continue; }
-            if (line.StartsWith(@"@VoiceSubtitle")) {
+            if (line.StartsWith(@"//"))
+            {
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(line))
+            {
+                continue;
+            }
+
+            if (line.StartsWith(@"@VoiceSubtitle"))
+            {
                 subs.Add(line);
-                continue; 
+                continue;
             }
 
             try
@@ -52,10 +61,10 @@ internal static class Cache
                 // remove unwanted scenarios
                 if (parts.Length != 2 || string.IsNullOrEmpty(value) || string.IsNullOrEmpty(key))
                 {
-                    continue; 
+                    continue;
                 }
 
-                dict.TryAdd(key, value);                        
+                dict.TryAdd(key, value);
             }
             catch (IndexOutOfRangeException)
             {
@@ -64,7 +73,7 @@ internal static class Cache
             }
 
             if (progress)
-            {                        
+            {
                 Tools.ShowProgress(count, total);
             }
         }
@@ -73,6 +82,7 @@ internal static class Cache
         {
             BuildSubtitles(file, subs);
         }
+
         return dict;
     }
 
@@ -151,7 +161,7 @@ internal static class Cache
         // loading multiple custom translation .txt cache 
         var manualCaches = Directory.GetFiles(Program.cacheFolder, "CustomTranslationCache_*",
             SearchOption.AllDirectories);
-            
+
         if (manualCaches.Length <= 0) return;
 
         foreach (var manualCache in manualCaches)
@@ -256,35 +266,6 @@ internal static class Cache
         var str = $"##{line.FilePath}\n{line.Japanese}\n{line.English}\n\n";
         File.AppendAllText(Program.errorFile, str);
     }
- 
-    /* outdated, uses the old cache format
-    /// <summary>
-    /// returns eventual translation from manual, official or machine cache
-    /// </summary>
-    internal static ILine Get(ILine line)
-    {
-        if (manual.ContainsKey(line.Japanese))
-        {
-            line.ManualTranslation = manual[line.Japanese];
-            line.Color = ConsoleColor.Cyan;
-        }
-        else if (official.ContainsKey(line.Japanese))
-        {
-            line.OfficialTranslation = official[line.Japanese];
-            line.Color = ConsoleColor.Green;
-        }
-        else if (machine.ContainsKey(line.Japanese))
-        {
-            line.ManualTranslation = machine[line.Japanese];
-            line.Color = ConsoleColor.DarkBlue;
-        }
-        else
-        {
-            line.Color = ConsoleColor.Blue;
-        }
-        return line;
-    }
-    */
 
     /// <summary>
     /// Save Cache as .json
@@ -293,8 +274,8 @@ internal static class Cache
     {
         if (isSafeExport)
         {
-            var safeCacheFilePath = $"{ cacheFilePath}_safe";
-            var safeJson = JsonConvert.SerializeObject(dic, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new SafeContractResolver()});
+            var safeCacheFilePath = $"{cacheFilePath}_safe";
+            var safeJson = JsonConvert.SerializeObject(dic, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new SafeContractResolver() });
             File.WriteAllText(safeCacheFilePath, safeJson);
         }
 

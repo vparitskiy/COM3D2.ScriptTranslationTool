@@ -7,7 +7,6 @@ namespace COM3D2.ScriptTranslationTool;
 
 internal static class Translate
 {
-
     private const string Address = "http://127.0.0.1:14366/";
     private static readonly HttpClient Client = new();
 
@@ -21,7 +20,7 @@ internal static class Translate
     {
         return TranslateAsync(text).Result;
     }
-        
+
 
     /// <summary>
     /// Translate  a line using Sugoi Translator

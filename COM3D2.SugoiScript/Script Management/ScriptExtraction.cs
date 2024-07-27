@@ -107,8 +107,8 @@ namespace COM3D2.ScriptTranslationTool
                         else if (script.Lines[i].StartsWith("@ChoicesSet", StringComparison.InvariantCultureIgnoreCase))
                         {
                             script.CaptureChoice(i);
-                        } 
-                        
+                        }
+
                         //Yotogi Message is a new kind of text found only in Yotigi+ scripts
                         else if (script.Lines[i].StartsWith("@YotogiMessage", StringComparison.InvariantCultureIgnoreCase))
                         {
@@ -287,7 +287,7 @@ namespace COM3D2.ScriptTranslationTool
 
         [GeneratedRegex(@"text=""(.*?)""")]
         private static partial Regex ChoiceRegex();
-        
+
         [GeneratedRegex(@"text=""(.*?)""")]
         private static partial Regex YotogiMessageRegex();
 
@@ -390,7 +390,7 @@ namespace COM3D2.ScriptTranslationTool
                 IsCasino = isCasino,
                 Voice = voice
             };
-            
+
             Subs.Add(subData);
         }
 
@@ -435,7 +435,7 @@ namespace COM3D2.ScriptTranslationTool
             var line = SplitTranslation(match.Groups[1].Value);
             Talks.Add(line);
         }
-        
+
         internal void CaptureYotogiMessage(int i)
         {
             //getting text with regex this time as it's nested in "quotes"
@@ -452,7 +452,6 @@ namespace COM3D2.ScriptTranslationTool
             var japanese = text.Substring(0, pos).Trim();
             var english = text.Substring(pos + 3).Replace("…", "...").Replace("<E>", "").Trim(); //had to add <E> replace because of Kiss <E><E> errors 
             return (japanese, english);
-
         }
 
         internal void SaveToCache(string cachePath, bool isNpc)
@@ -486,7 +485,7 @@ namespace COM3D2.ScriptTranslationTool
             var formatedSubs = Subs.Where(s => !string.IsNullOrEmpty(s.Original) || !string.IsNullOrEmpty(s.Translation))
                 .Select(s => $"@VoiceSubtitle{JsonConvert.SerializeObject(s)}")
                 .ToArray();
-            
+
             File.WriteAllLines(path, formatedSubs);
         }
 

@@ -156,15 +156,50 @@ namespace COM3D2.ScriptTranslationTool
             Console.WriteLine("\n===================== Options =====================");
             while (key.Key != ConsoleKey.Enter)
             {
-                if ((key.Key == ConsoleKey.D1) || (key.Key == ConsoleKey.NumPad1)) { isSourceJpGame = !isSourceJpGame; }
-                if ((key.Key == ConsoleKey.D2) || (key.Key == ConsoleKey.NumPad2)) { isSourceEngGame = !isSourceEngGame; }
-                if ((key.Key == ConsoleKey.D3) || (key.Key == ConsoleKey.NumPad3)) { exportToi18NEx = !exportToi18NEx; }
-                if ((key.Key == ConsoleKey.D4) || (key.Key == ConsoleKey.NumPad4)) { isSafeExport = !isSafeExport; }
-                if ((key.Key == ConsoleKey.D5) || (key.Key == ConsoleKey.NumPad5)) { forcedTranslation = !forcedTranslation; }
-                if ((key.Key == ConsoleKey.D6) || (key.Key == ConsoleKey.NumPad6)) { isExportBson = !isExportBson; }
-                if ((key.Key == ConsoleKey.D7) || (key.Key == ConsoleKey.NumPad7)) { JpScriptExtraction.ExtractJapanese(isSourceJpGame); }
-                if ((key.Key == ConsoleKey.D8) || (key.Key == ConsoleKey.NumPad8)) { EngScriptExtraction.ExtractOfficial(isSourceEngGame); }
-                if ((key.Key == ConsoleKey.D9) || (key.Key == ConsoleKey.NumPad9)) { UITranslation.Process(); }
+                if ((key.Key == ConsoleKey.D1) || (key.Key == ConsoleKey.NumPad1))
+                {
+                    isSourceJpGame = !isSourceJpGame;
+                }
+
+                if ((key.Key == ConsoleKey.D2) || (key.Key == ConsoleKey.NumPad2))
+                {
+                    isSourceEngGame = !isSourceEngGame;
+                }
+
+                if ((key.Key == ConsoleKey.D3) || (key.Key == ConsoleKey.NumPad3))
+                {
+                    exportToi18NEx = !exportToi18NEx;
+                }
+
+                if ((key.Key == ConsoleKey.D4) || (key.Key == ConsoleKey.NumPad4))
+                {
+                    isSafeExport = !isSafeExport;
+                }
+
+                if ((key.Key == ConsoleKey.D5) || (key.Key == ConsoleKey.NumPad5))
+                {
+                    forcedTranslation = !forcedTranslation;
+                }
+
+                if ((key.Key == ConsoleKey.D6) || (key.Key == ConsoleKey.NumPad6))
+                {
+                    isExportBson = !isExportBson;
+                }
+
+                if ((key.Key == ConsoleKey.D7) || (key.Key == ConsoleKey.NumPad7))
+                {
+                    JpScriptExtraction.ExtractJapanese(isSourceJpGame);
+                }
+
+                if ((key.Key == ConsoleKey.D8) || (key.Key == ConsoleKey.NumPad8))
+                {
+                    EngScriptExtraction.ExtractOfficial(isSourceEngGame);
+                }
+
+                if ((key.Key == ConsoleKey.D9) || (key.Key == ConsoleKey.NumPad9))
+                {
+                    UITranslation.Process();
+                }
 
 
                 Console.ResetColor();

@@ -35,7 +35,10 @@ namespace COM3D2.ScriptTranslationTool
 
             foreach (var file in _scriptFiles)
             {
-                if (AlreadyParsedScripts.Contains(file)) { continue; }
+                if (AlreadyParsedScripts.Contains(file))
+                {
+                    continue;
+                }
 
                 var concatStrings = new StringBuilder();
                 var filename = Path.GetFileName(file);
@@ -53,7 +56,7 @@ namespace COM3D2.ScriptTranslationTool
                     {
                         Console.WriteLine("EXISTING LINE");
                         currentLine = Cache.ScriptCache[line.Trim()];
-                    }                        
+                    }
                     else
                     {
                         Console.WriteLine("NEW LINE");
@@ -63,14 +66,18 @@ namespace COM3D2.ScriptTranslationTool
                     lineCount++;
 
                     // skip if line is empty
-                    if (string.IsNullOrEmpty(currentLine.Japanese)) { continue; }
+                    if (string.IsNullOrEmpty(currentLine.Japanese))
+                    {
+                        continue;
+                    }
 
                     Console.Write(currentLine.Japanese);
                     Tools.Write(" => ", ConsoleColor.Yellow);
 
 
                     //Translate if needed/possible
-                    if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
+                    if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) ||
+                                                   (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
                     {
                         currentLine.GetTranslation();
 
@@ -100,7 +107,7 @@ namespace COM3D2.ScriptTranslationTool
                     if (Program.exportToi18NEx)
                     {
                         if (Program.isExportBson)
-                            concatStrings.AppendLine($"{currentLine.Japanese}\t{currentLine.English}".Trim());                        
+                            concatStrings.AppendLine($"{currentLine.Japanese}\t{currentLine.English}".Trim());
                         else
                             ScriptManagement.AddTo(currentLine);
                     }
@@ -133,10 +140,8 @@ namespace COM3D2.ScriptTranslationTool
                 {
                     foreach (var subFile in subtitlesFilesList)
                     {
-                        
-
                         if (Program.isExportBson)
-                            
+
                         {
                             var subFileName = $"{Path.GetFileNameWithoutExtension(subFile)}";
                             var bytes = File.ReadAllBytes(subFile);
@@ -186,7 +191,6 @@ namespace COM3D2.ScriptTranslationTool
         }
 
 
-
         private static List<string> GetScripts()
         {
             var scripts = new List<string>();
@@ -206,13 +210,12 @@ namespace COM3D2.ScriptTranslationTool
                 else
                 {
                     Console.WriteLine("Jp cache not found.");
-
                 }
             }
             else
             {
                 scripts = Directory.EnumerateFiles(Program.japaneseScriptFolder, "*.txt*", SearchOption.AllDirectories)
-                                   .ToList();
+                    .ToList();
             }
 
             return scripts;

@@ -5,7 +5,7 @@ using System.IO;
 namespace COM3D2.ScriptTranslationTool
 {
     internal static class ScriptManagement
-    { 
+    {
         /// <summary>
         /// List Already Translated Script files.
         /// </summary>
@@ -24,7 +24,7 @@ namespace COM3D2.ScriptTranslationTool
 
             return dict;
         }
-        
+
         internal static void CreateSortedFolders()
         {
             string parentPath = Directory.GetParent(Program.i18NExScriptFolder).FullName;
@@ -42,9 +42,10 @@ namespace COM3D2.ScriptTranslationTool
             {
                 Tools.MakeFolder(Path.Combine(Program.i18NExScriptFolder, keyValuePair.Value));
             }
+
             Tools.MakeFolder(Path.Combine(Program.i18NExScriptFolder, "[UnCategorized]"));
         }
-        
+
         /// <summary>
         /// Save translated lines to i18nEx sorted scripts.
         /// </summary>
@@ -61,7 +62,7 @@ namespace COM3D2.ScriptTranslationTool
                     break;
                 }
             }
-            
+
             var fileName = $"{Path.GetFileNameWithoutExtension(line.FilePath)}.txt";
             var path = Path.Combine(Program.i18NExScriptFolder, folder, fileName);
             File.AppendAllText(path, savedString);
@@ -90,45 +91,45 @@ namespace COM3D2.ScriptTranslationTool
     {
         internal static Dictionary<string, string> Dict = new Dictionary<string, string>
         {
-            {"a1_", "Muku"},
-            {"b1_", "Majime"},
-            {"c1_", "Rindere"},
-            {"d1_", "Bookworm"},
-            {"e1_", "Koakuma"},
-            {"f1_", "LadyLike"},
-            {"g1_", "Secretary"},
-            {"h1_", "Imouto"},
-            {"j1_", "Wary"},
-            {"k1_", "Ojousama"},
-            {"l1_", "Osananajime"},
-            {"m1_", "Masochist"},
-            {"n1_", "Haraguro"},
-            {"p1_", "Gyaru" },
-            {"v1_", "Kimajime"},
-            {"w1_", "Kisakude"},
-            {"a_", "Tsundere"},
-            {"b_", "Kuudere"},
-            {"c_", "Pure"},
-            {"d_", "Yandere"},
-            {"e_", "Onee-chan"},
-            {"f_", "Genki"},
-            {"g_", "Do-S"},
-            {"crc_ck_", "[Commands & Choices]"},
-            {"ck_sex", "[Commands & Choices]"},
-            {"ck_h_", "[Commands & Choices]"},
-            {"ck_dance_", "[Commands & Choices]"},
-            {"ck_cas_", "[Commands & Choices]"},
-            {"lifemode", "[Misc]/Lifemode"},
-            {"idol", "[Misc]/Idol"},
-            {"scout", "[Misc]/Scout"},
-            {"npc", "[Misc]/NPC"},
-            {"harem", "[Misc]/Harem"},
-            {"yuri", "[Misc]/Yuri"},
-            {"pj", "[Misc]/Pajama Collab"},
-            {"cw", "[Misc]/Camping Event"},
-            {"rehire", "[Misc]/Extra Maids rehire"},
-            {"club_gp", "[Misc]/GP01 Club route"},
-            {"xmas", "[Misc]/Xmas"}
+            { "a1_", "Muku" },
+            { "b1_", "Majime" },
+            { "c1_", "Rindere" },
+            { "d1_", "Bookworm" },
+            { "e1_", "Koakuma" },
+            { "f1_", "LadyLike" },
+            { "g1_", "Secretary" },
+            { "h1_", "Imouto" },
+            { "j1_", "Wary" },
+            { "k1_", "Ojousama" },
+            { "l1_", "Osananajime" },
+            { "m1_", "Masochist" },
+            { "n1_", "Haraguro" },
+            { "p1_", "Gyaru" },
+            { "v1_", "Kimajime" },
+            { "w1_", "Kisakude" },
+            { "a_", "Tsundere" },
+            { "b_", "Kuudere" },
+            { "c_", "Pure" },
+            { "d_", "Yandere" },
+            { "e_", "Onee-chan" },
+            { "f_", "Genki" },
+            { "g_", "Do-S" },
+            { "crc_ck_", "[Commands & Choices]" },
+            { "ck_sex", "[Commands & Choices]" },
+            { "ck_h_", "[Commands & Choices]" },
+            { "ck_dance_", "[Commands & Choices]" },
+            { "ck_cas_", "[Commands & Choices]" },
+            { "lifemode", "[Misc]/Lifemode" },
+            { "idol", "[Misc]/Idol" },
+            { "scout", "[Misc]/Scout" },
+            { "npc", "[Misc]/NPC" },
+            { "harem", "[Misc]/Harem" },
+            { "yuri", "[Misc]/Yuri" },
+            { "pj", "[Misc]/Pajama Collab" },
+            { "cw", "[Misc]/Camping Event" },
+            { "rehire", "[Misc]/Extra Maids rehire" },
+            { "club_gp", "[Misc]/GP01 Club route" },
+            { "xmas", "[Misc]/Xmas" }
         };
     }
 }

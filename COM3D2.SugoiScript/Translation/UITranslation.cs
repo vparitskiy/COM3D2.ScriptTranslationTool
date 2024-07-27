@@ -12,7 +12,7 @@ namespace COM3D2.ScriptTranslationTool
             Tools.MakeFolder(Program.i18NExUiFolder);
             IEnumerable<string> csvs = Directory.EnumerateFiles(Program.japaneseUIFolder, "*.csv*", SearchOption.AllDirectories);
             int csvCount = 1;
-            
+
             foreach (string csv in csvs)
             {
                 Tools.WriteLine($"\n-------- {Path.GetFileName(csv)} --------", ConsoleColor.Yellow);
@@ -21,7 +21,7 @@ namespace COM3D2.ScriptTranslationTool
                 List<CsvLine> csvLines = ParseCSV(csv);
 
                 //let's try to translate each line
-                for(int i = 0; i < csvLines.Count; i++)
+                for (int i = 0; i < csvLines.Count; i++)
                 {
                     Console.Title = $"Processing: line {i}/{csvLines.Count} from {csvCount}/{csvs.Count()} UI files";
 
@@ -39,7 +39,8 @@ namespace COM3D2.ScriptTranslationTool
                     //    Cache.Get(currentLine);
 
                     //Translate if needed/possible
-                    if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
+                    if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) ||
+                                                   (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
                     {
                         currentLine.GetTranslation();
                         //ignore faulty returns
@@ -48,7 +49,7 @@ namespace COM3D2.ScriptTranslationTool
                             Cache.AddToError(currentLine);
                             Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
                             continue;
-                        }  
+                        }
                     }
                     else if (string.IsNullOrEmpty(currentLine.English))
                     {
@@ -73,7 +74,7 @@ namespace COM3D2.ScriptTranslationTool
 
                 //Write content
                 List<string> lines = new List<string>();
-                foreach(CsvLine line in csvLines)
+                foreach (CsvLine line in csvLines)
                 {
                     lines.Add(line.ExportLine());
                 }
@@ -101,6 +102,7 @@ namespace COM3D2.ScriptTranslationTool
                 {
                     header = parser.ReadFields();
                 }
+
                 //commented code was here to check where csv parsing broke
                 //int i = 1;
                 while (!parser.EndOfData)
@@ -114,6 +116,7 @@ namespace COM3D2.ScriptTranslationTool
                     csvLines.Add(line);
                 }
             }
+
             return csvLines;
         }
     }

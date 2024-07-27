@@ -16,7 +16,10 @@ internal static class Tools
         var progress = (current / max) * 100;
         var str = Math.Floor(progress).ToString(CultureInfo.CurrentCulture).PadRight(3);
         Console.Write($"\b\b\b\b{str}%");
-        if (str == "100") { Console.Write("\n"); }
+        if (str == "100")
+        {
+            Console.Write("\n");
+        }
     }
 
 
@@ -59,8 +62,9 @@ internal static class Tools
         catch (Exception)
         {
             WriteLine("\nSugoi Translator is Offline, uncached sentences won't be translated", ConsoleColor.Red);
-            isRunning= false;
+            isRunning = false;
         }
+
         return isRunning;
     }
 
@@ -75,7 +79,7 @@ internal static class Tools
         Program.officialCacheFile = GetAbsolutePath(ConfigurationManager.AppSettings.Get("OfficialTranslationCache"));
         Program.officialSubtitlesCache = GetAbsolutePath(ConfigurationManager.AppSettings.Get("OfficialSubtitlesCache"));
         Program.manualCacheFile = GetAbsolutePath(ConfigurationManager.AppSettings.Get("ManualTranslationCache"));
-        
+
         Program.errorFile = GetAbsolutePath(ConfigurationManager.AppSettings.Get("TranslationErrors"));
 
         Program.japaneseScriptFolder = GetAbsolutePath(ConfigurationManager.AppSettings.Get("JapaneseScriptPath"));
@@ -85,11 +89,11 @@ internal static class Tools
 
         Program.moveFinishedRawScript = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("MoveTranslated"));
         Program.exportToi18NEx = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("ExportToi18nEx"));
-        
+
         // Getting GameData path Setting > Registry > Ask
         if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings.Get("JPGamePath")))
         {
-            var path = Path.Combine(ConfigurationManager.AppSettings.Get("JPGamePath"),"GameData");
+            var path = Path.Combine(ConfigurationManager.AppSettings.Get("JPGamePath"), "GameData");
             Program.jpGameDataPath = GetAbsolutePath(path);
         }
 
@@ -107,7 +111,7 @@ internal static class Tools
             : Path.Combine(Program.appDirectory, path ?? throw new ArgumentNullException(nameof(path)));
         return absolutePath;
     }
-    
+
     internal static void WriteLine(string str, ConsoleColor color)
     {
         Console.ForegroundColor = color;

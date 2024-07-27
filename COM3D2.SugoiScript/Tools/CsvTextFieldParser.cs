@@ -28,43 +28,57 @@ namespace NotVisualBasic.FileIO
         /// Constructs a parser from the specified input stream.
         /// </summary>
         public CsvTextFieldParser(Stream stream)
-            : this(new StreamReader(stream)) { }
+            : this(new StreamReader(stream))
+        {
+        }
 
         /// <summary>
         /// Constructs a parser from the specified input stream with the specified encoding.
         /// </summary>
         public CsvTextFieldParser(Stream stream, Encoding encoding)
-            : this(new StreamReader(stream, encoding)) { }
+            : this(new StreamReader(stream, encoding))
+        {
+        }
 
         /// <summary>
         /// Constructs a parser from the specified input stream with the specified encoding and byte order mark detection option.
         /// </summary>
         public CsvTextFieldParser(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks)
-            : this(new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks)) { }
+            : this(new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks))
+        {
+        }
 
         /// <summary>
         /// Constructs a parser from the specified input stream with the specified encoding and byte order mark detection option, and optionally leaves the stream open.
         /// </summary>
         public CsvTextFieldParser(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, bool leaveOpen)
-            : this(new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks, 1024, leaveOpen)) { }
+            : this(new StreamReader(stream, encoding, detectEncodingFromByteOrderMarks, 1024, leaveOpen))
+        {
+        }
 
         /// <summary>
         /// Constructs a parser from the specified input file path.
         /// </summary>
         public CsvTextFieldParser(string path)
-            : this(new StreamReader(path)) { }
+            : this(new StreamReader(path))
+        {
+        }
 
         /// <summary>
         /// Constructs a parser from the specified input file path with the specified encoding.
         /// </summary>
         public CsvTextFieldParser(string path, Encoding encoding)
-            : this(new StreamReader(path, encoding)) { }
+            : this(new StreamReader(path, encoding))
+        {
+        }
 
         /// <summary>
         /// Constructs a parser from the specified input file path with the specified encoding and byte order mark detection option.
         /// </summary>
         public CsvTextFieldParser(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks)
-            : this(new StreamReader(path, encoding, detectEncodingFromByteOrderMarks)) { }
+            : this(new StreamReader(path, encoding, detectEncodingFromByteOrderMarks))
+        {
+        }
 
         /// <summary>
         /// Constructs a parser from the specified input text reader.
@@ -119,6 +133,7 @@ namespace NotVisualBasic.FileIO
             {
                 return ParseFieldAfterOpeningQuote(ref line, startIndex + 1, out nextStartIndex);
             }
+
             if ((CompatibilityMode || TrimWhiteSpace) && HasFieldsEnclosedInQuotes && char.IsWhiteSpace(line[startIndex]) && line[startIndex] != delimiterChar)
             {
                 int leadingWhitespaceCount = line.Skip(startIndex).TakeWhile(ch => char.IsWhiteSpace(ch) && ch != delimiterChar).Count();
@@ -141,10 +156,12 @@ namespace NotVisualBasic.FileIO
                 field = line.Substring(startIndex).TrimEnd('\r', '\n');
                 nextStartIndex = line.Length;
             }
+
             if (TrimWhiteSpace)
             {
                 field = field.Trim();
             }
+
             return field;
         }
 
@@ -196,6 +213,7 @@ namespace NotVisualBasic.FileIO
                             errorLineNumber: currentLineNumber
                         );
                     }
+
                     line += nextLine;
                 }
             } while (!isQuoteClosed && i < line.Length);
@@ -219,6 +237,7 @@ namespace NotVisualBasic.FileIO
                     {
                         i++;
                     }
+
                     i++;
                     isMalformed = false;
                 }
@@ -247,6 +266,7 @@ namespace NotVisualBasic.FileIO
                             {
                                 i++;
                             }
+
                             i++;
                         }
                     }
@@ -269,12 +289,14 @@ namespace NotVisualBasic.FileIO
                     errorLineNumber: currentLineNumber
                 );
             }
+
             nextStartIndex = i + 1;
             string field = sb.ToString();
             if (TrimWhiteSpace)
             {
                 field = field.Trim();
             }
+
             return field;
         }
 
@@ -284,6 +306,7 @@ namespace NotVisualBasic.FileIO
             {
                 return true;
             }
+
             if (peekedEmptyLineCount > 0)
             {
                 return false;
@@ -297,6 +320,7 @@ namespace NotVisualBasic.FileIO
                 {
                     peekedEmptyLineCount = ignoredEmptyLineCount;
                 }
+
                 return false;
             }
 
@@ -359,6 +383,7 @@ namespace NotVisualBasic.FileIO
                     {
                         sb.Append((char)reader.Read());
                     }
+
                     break;
                 }
             }
@@ -396,8 +421,10 @@ namespace NotVisualBasic.FileIO
                     {
                         return lineNumber - peekedEmptyLineCount + 1;
                     }
+
                     return -1;
                 }
+
                 return lineNumber - peekedEmptyLineCount;
             }
         }
@@ -494,16 +521,14 @@ namespace NotVisualBasic.FileIO
         /// <exception cref="NotSupportedException">The delimiters are set to an array that does not contain exactly one element with exactly one character.</exception>
         public string[] Delimiters
         {
-            get
-            {
-                return new string[] { delimiterChar.ToString(CultureInfo.InvariantCulture) };
-            }
+            get { return new string[] { delimiterChar.ToString(CultureInfo.InvariantCulture) }; }
             set
             {
                 if (value == null || !value.Any())
                 {
                     throw new NotSupportedException("This parser requires a delimiter");
                 }
+
                 if (value.Length > 1)
                 {
                     throw new NotSupportedException("This parser does not support multiple delimiters.");
@@ -514,10 +539,12 @@ namespace NotVisualBasic.FileIO
                 {
                     throw new ArgumentException("A delimiter cannot be null or an empty string.");
                 }
+
                 if (delimiterString.Length > 1)
                 {
                     throw new NotSupportedException("This parser does not support a delimiter with multiple characters.");
                 }
+
                 SetDelimiter(delimiterString.Single());
             }
         }
@@ -533,6 +560,7 @@ namespace NotVisualBasic.FileIO
             {
                 throw new ArgumentException("This parser does not support delimiters that contain end-of-line characters");
             }
+
             this.delimiterChar = delimiterChar;
         }
 
@@ -553,6 +581,7 @@ namespace NotVisualBasic.FileIO
             {
                 this.quoteEscapeChar = quoteChar;
             }
+
             this.quoteChar = quoteChar;
         }
 
@@ -567,6 +596,7 @@ namespace NotVisualBasic.FileIO
             {
                 throw new ArgumentException("This parser does not support end-of-line characters as a quote escape character");
             }
+
             this.quoteEscapeChar = quoteEscapeChar;
         }
 
