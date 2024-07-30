@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace COM3D2.ScriptTranslationTool
 {
@@ -9,6 +10,41 @@ namespace COM3D2.ScriptTranslationTool
     {
         internal static void Process()
         {
+            Dictionary<string,string> tempCSVCache = new Dictionary<string,string>();
+
+            //trying to load official .json
+            string[] jsonFiles =
+            {
+                "dynamic.json",
+                "dance_subtitle.json",
+                "parts.json",
+                "yotogi.json"
+            };
+
+            foreach (string jsonFile in jsonFiles)
+            {
+                string jsonPath = Path.Combine(Program.cacheFolder, jsonFile);
+
+                if (File.Exists(jsonPath) && !Program.isSafeExport)
+                {
+                    string[] strings = File.ReadAllLines(jsonPath);
+                    for (int i = 0; i < strings.Length; i++)
+                    {
+                        if (strings[i].Contains("\"Languages\":"))
+                        {
+                            string jp = strings[i + 1].Replace("\"", "").Trim().Trim(',');
+                            string eng = strings[i + 2].Replace("\"", "").Trim().Trim(',');
+
+                            if (!tempCSVCache.ContainsKey(jp) && !string.IsNullOrEmpty(jp))
+                            {
+                                tempCSVCache.Add(jp, eng);
+                                Console.WriteLine($"Loaded translation: {jp} {eng}");
+                            }
+                        }
+                    }
+                }
+            }
+
             Tools.MakeFolder(Program.i18nExUIFolder);
             IEnumerable<string> csvs = Directory.EnumerateFiles(Program.japaneseUIFolder, "*.csv*", SearchOption.AllDirectories);
             int csvCount = 1;
@@ -31,20 +67,17 @@ namespace COM3D2.ScriptTranslationTool
                     if (String.IsNullOrWhiteSpace(currentLine.Japanese))
                         continue;
 
-                    /*
-                    //recover translation cache
-                    if (Cache.csvCache.ContainsKey(currentLine.Japanese))
-                    {
-                        currentLine.OfficialTranslation = Cache.csvCache[currentLine.Japanese].OfficialTranslation;
-                        currentLine.MachineTranslation = Cache.csvCache[currentLine.Japanese].MachineTranslation;
-                        currentLine.ManualTranslation = Cache.csvCache[currentLine.Japanese].ManualTranslation;
-                        currentLine.ChTraditional = Cache.csvCache[currentLine.Japanese].ChTraditional;
-                        currentLine.ChSimple = Cache.csvCache[currentLine.Japanese].ChSimple;
-                    }
-                    */
-
                     Console.Write(currentLine.Japanese);
                     Tools.Write(" => ", ConsoleColor.Yellow);
+
+                    //retrieve from tempCache
+                    if (tempCSVCache.ContainsKey(currentLine.Japanese) && !Program.isSafeExport)
+                    {
+                        currentLine.OfficialTranslation = tempCSVCache[currentLine.Japanese];
+                        currentLine.Color = ConsoleColor.Green;
+                    }
+                        
+
 
                     //Translate if needed/possible
                     if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))

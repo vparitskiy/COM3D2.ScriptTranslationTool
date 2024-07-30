@@ -184,20 +184,12 @@ namespace COM3D2.ScriptTranslationTool
         public string ChSimple { get; set; } = string.Empty;
         public string ChTraditional { get; set; } = string.Empty;
 
-        //Fields bellow are not saved as .json
-        [JsonIgnore]
         public string FilePath { get; set; }
-        [JsonIgnore]
         public string Key { get; set; }
-        [JsonIgnore]
         public string Type { get; set; }
-        [JsonIgnore]
         public string Description { get; set; }
-        [JsonIgnore]
         public string Japanese { get; set; }
-        [JsonIgnore]
         public string JapanesePrep { get; set; }
-        [JsonIgnore]
         public string English
         {
             //returns the first best translation available, otherwise returns an empty string.

@@ -62,12 +62,12 @@ namespace COM3D2.ScriptTranslationTool
 
                     if (Cache.scriptCache.ContainsKey(line.Trim()))
                     {
-                        Console.WriteLine("EXISTING LINE");
+                        //Console.WriteLine("EXISTING LINE");
                         currentLine = Cache.scriptCache[line.Trim()];
                     }                        
                     else
                     {
-                        Console.WriteLine("NEW LINE");
+                        //Console.WriteLine("NEW LINE");
                         currentLine = new ScriptLine(filename, line);
                     }
                         
@@ -125,7 +125,7 @@ namespace COM3D2.ScriptTranslationTool
 
                 if (Program.isExportBson)
                 {
-                    bsonDictionarry.Add($"{Path.GetFileNameWithoutExtension(filename)}.txt",Encoding.GetEncoding(932).GetBytes(concatStrings.ToString().Trim()));
+                    bsonDictionarry.Add($"{Path.GetFileNameWithoutExtension(filename)}.txt",Encoding.UTF8.GetBytes(concatStrings.ToString().Trim()));
                 }
 
                 alreadyParsedScripts.Add(filename);
