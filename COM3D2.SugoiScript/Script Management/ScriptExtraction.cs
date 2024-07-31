@@ -257,6 +257,31 @@ namespace COM3D2.ScriptTranslationTool
                 Cache.SaveJson(arcHistoryJP, arcHistoryJson, false);
             }
 
+            //adding loose script files
+            if (Directory.Exists(Program.japaneseScriptFolder))
+            {
+                var looseScripts = Directory.GetFiles(Program.japaneseScriptFolder, "*.txt*", SearchOption.AllDirectories);
+                if (looseScripts.Length != 0)
+                {
+                    Console.WriteLine($"Found {looseScripts.Length} loose Japanese scripts.");
+                    foreach (string script in looseScripts)
+                    {
+                        string scriptname = $"{Path.GetFileNameWithoutExtension(script)}.ks";
+                        string[] lines = File.ReadAllLines(script);
+
+                        if (jpCache.ContainsKey(scriptname) && lines.Any())
+                        {
+                            jpCache[scriptname].AddRange(lines.Select(l => l.Trim()));   
+                            jpCache[scriptname] = jpCache[scriptname].Distinct().ToList();
+                        }
+                        else if(lines.Any())
+                        {
+                            jpCache.Add(scriptname, lines.Select(l => l.Trim()).ToList());
+                        }
+                    }
+                }
+            }
+
             Console.WriteLine("Saving Jp Cache.");
             Cache.SaveJson(jpCache, jpCachePath, false);
             Tools.WriteLine($"{newLines} new/updated lines in {newScripts} new/updated scripts\n\n", ConsoleColor.Green);
