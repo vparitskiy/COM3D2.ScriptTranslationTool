@@ -137,7 +137,7 @@ namespace COM3D2.ScriptTranslationTool
     {
         const string jpArchistoryFile = "jp_archistory.json";
         static Dictionary<string, long> arcHistoryJP = new Dictionary<string, long>();
-        static Dictionary<string, List<string>> jpCache = new Dictionary<string, List<string>> ();
+        static SortedDictionary<string, List<string>> jpCache = new SortedDictionary<string, List<string>> ();
 
         internal static void ExtractJapanese(bool isSourceJpGame)
         {
@@ -540,21 +540,29 @@ namespace COM3D2.ScriptTranslationTool
         {
             return (from KeyValuePair<string, ArcFileEntry> arcEntry in arc.Files.Where(f => Path.GetExtension(f.Value.Name) == ".ks")
                     let pointer = arcEntry.Value.Pointer.Decompress() //Looks like all scripts are compressed, won't hurt if they aren't
-                    let textData = Encoding.GetEncoding(932).GetString(pointer.Data) //And they are encoded as Shift JIS (codepage=932)
+                    let textData = GetEncoding(pointer.Data) ? Encoding.UTF8.GetString(pointer.Data) : Encoding.GetEncoding(932).GetString(pointer.Data) //I need to check what encoding it's in since Kiss started to use TF8 in addition to ShiftJS
                     select new ScriptFile(arcEntry.Value.Name, textData)).ToList();
         }
 
         internal ScriptFile GetScript(string fileName)
         {
             fileName = $"{fileName}".ToLower();
-            //Console.WriteLine($"Trying to get {fileName}");
 
             var scripts = (from KeyValuePair<string, ArcFileEntry> arcEntry in arc.Files.Where(f => Path.GetFileNameWithoutExtension(f.Value.Name) == fileName)
                            let pointer = arcEntry.Value.Pointer.Decompress()
-                           let textData = Encoding.GetEncoding(932).GetString(pointer.Data)
+                           let textData = GetEncoding(pointer.Data) ? Encoding.UTF8.GetString(pointer.Data) : Encoding.GetEncoding(932).GetString(pointer.Data)
                            select new ScriptFile(arcEntry.Value.Name, textData)).ToArray();
 
             return scripts[0];            
+        }
+
+        //Kiss and Unity use a BOM at the start of scripts to know if it's encoded in UTF8 (EF BB BF or as numbers 239 187 191)
+        private bool GetEncoding(byte[] sjis_bytes)
+        {
+            if (sjis_bytes != null && sjis_bytes.Length >= 3 && sjis_bytes[0] == 239 && sjis_bytes[1] == 187 && sjis_bytes[2] == 191)
+                return true;
+            else 
+                return false;
         }
     }
 

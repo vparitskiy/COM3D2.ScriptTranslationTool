@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace COM3D2.ScriptTranslationTool
 {
@@ -10,7 +11,7 @@ namespace COM3D2.ScriptTranslationTool
     {
         internal static void Process()
         {
-            Dictionary<string,string> tempCSVCache = new Dictionary<string,string>();
+            Dictionary<string, string[]> tempTermCache = new Dictionary<string, string[]>();
 
             //trying to load official .json
             string[] jsonFiles =
@@ -25,24 +26,41 @@ namespace COM3D2.ScriptTranslationTool
             {
                 string jsonPath = Path.Combine(Program.cacheFolder, jsonFile);
 
-                if (File.Exists(jsonPath) && !Program.isSafeExport)
-                {
-                    string[] strings = File.ReadAllLines(jsonPath);
-                    for (int i = 0; i < strings.Length; i++)
-                    {
-                        if (strings[i].Contains("\"Languages\":"))
-                        {
-                            string jp = strings[i + 1].Replace("\"", "").Trim().Trim(',');
-                            string eng = strings[i + 2].Replace("\"", "").Trim().Trim(',');
+                if (!File.Exists(jsonPath)) continue;
 
-                            if (!tempCSVCache.ContainsKey(jp) && !string.IsNullOrEmpty(jp))
-                            {
-                                tempCSVCache.Add(jp, eng);
-                                Console.WriteLine($"Loaded translation: {jp} {eng}");
-                            }
-                        }
-                    }
+                string jsonData = File.ReadAllText(jsonPath);
+
+                var jsonSerializerSettings = new JsonSerializerSettings();
+                jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+
+                var translationsTerms = JsonConvert.DeserializeObject<TermDatas>(jsonData, jsonSerializerSettings);
+
+                Console.WriteLine($"{jsonFile} contains {translationsTerms.mTerms.Count} terms.");
+
+                foreach ( var termData in translationsTerms.mTerms )
+                {
+                    if (!tempTermCache.ContainsKey(termData.Term))
+                        tempTermCache.Add(termData.Term, termData.Languages);
                 }
+                
+                /*                if (File.Exists(jsonPath) && !Program.isSafeExport)
+                                    {
+                                        string[] strings = File.ReadAllLines(jsonPath);
+                                        for (int i = 0; i < strings.Length; i++)
+                                        {
+                                            if (strings[i].Contains("\"Languages\":"))
+                                            {
+                                                string jp = Regex.Replace(strings[i + 1].Replace("\"", "").Trim().Trim(','), @"\s+", " ");
+                                                string eng = strings[i + 2].Replace("\"", "").Trim().Trim(',');
+
+                                                if (!tempCSVCache.ContainsKey(jp) && !string.IsNullOrEmpty(jp))
+                                                {
+                                                    tempCSVCache.Add(jp, eng);
+                                                    Console.WriteLine($"Loaded translation: {jp} {eng}");
+                                                }
+                                            }
+                                        }
+                                    }*/
             }
 
             Tools.MakeFolder(Program.i18nExUIFolder);
@@ -67,17 +85,20 @@ namespace COM3D2.ScriptTranslationTool
                     if (String.IsNullOrWhiteSpace(currentLine.Japanese))
                         continue;
 
-                    Console.Write(currentLine.Japanese);
-                    Tools.Write(" => ", ConsoleColor.Yellow);
+
 
                     //retrieve from tempCache
-                    if (tempCSVCache.ContainsKey(currentLine.Japanese) && !Program.isSafeExport)
+                    string category = Path.GetFileNameWithoutExtension(csv);
+                    string key = currentLine.Key;
+                    string term = $"{category}/{key}";
+                    if (tempTermCache.ContainsKey(term))
                     {
-                        currentLine.OfficialTranslation = tempCSVCache[currentLine.Japanese];
+                        currentLine.OfficialTranslation = tempTermCache[term][1];
                         currentLine.Color = ConsoleColor.Green;
                     }
-                        
 
+                    Console.Write(currentLine.Japanese);
+                    Tools.Write(" => ", ConsoleColor.Yellow);
 
                     //Translate if needed/possible
                     if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
@@ -158,6 +179,18 @@ namespace COM3D2.ScriptTranslationTool
                 }
             }
             return csvLines;
+        }
+    }
+
+
+    public class TermDatas
+    {
+        public List<TermData> mTerms { get; set; } = new List<TermData>();
+
+        public class TermData
+        {
+            public string[] Languages { get; set; }
+            public string Term { get; set; }
         }
     }
 }
