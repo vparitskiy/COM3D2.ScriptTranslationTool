@@ -189,15 +189,13 @@ namespace COM3D2.ScriptTranslationTool
         [GeneratedRegex(@"(\w)\1{15,}")]
         private static partial Regex MatchCharRegex();
 
-        // Fields bellow are not saved as .json
-        [JsonIgnore] public string FilePath { get; set; }
-        [JsonIgnore] public string Key { get; set; }
-        [JsonIgnore] public string Type { get; set; }
-        [JsonIgnore] public string Description { get; set; }
-        [JsonIgnore] public string Japanese { get; set; }
-        [JsonIgnore] public string JapanesePrep { get; set; }
-
-        [JsonIgnore]
+        
+        public string FilePath { get; set; }
+        public string Key { get; set; }
+        public string Type { get; set; }
+        public string Description { get; set; }
+        public string Japanese { get; set; }
+        public string JapanesePrep { get; set; }
         public string English
         {
             //returns the first best translation available, otherwise returns an empty string.

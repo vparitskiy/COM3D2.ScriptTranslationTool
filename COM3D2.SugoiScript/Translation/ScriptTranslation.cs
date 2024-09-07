@@ -54,12 +54,10 @@ namespace COM3D2.ScriptTranslationTool
                     ScriptLine currentLine;
                     if (Cache.ScriptCache.ContainsKey(line.Trim()))
                     {
-                        Console.WriteLine("EXISTING LINE");
                         currentLine = Cache.ScriptCache[line.Trim()];
                     }
                     else
                     {
-                        Console.WriteLine("NEW LINE");
                         currentLine = new ScriptLine(filename, line);
                     }
 
@@ -76,22 +74,26 @@ namespace COM3D2.ScriptTranslationTool
 
 
                     //Translate if needed/possible
-                    if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) ||
-                                                   (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation))))
+
+                    if (Program.isSugoiRunning)
                     {
-                        currentLine.GetTranslation();
-
-                        //ignore faulty returns
-                        if (currentLine.HasRepeat || currentLine.HasError)
+                        if (string.IsNullOrEmpty(currentLine.English) || (Program.forcedTranslation && string.IsNullOrEmpty(currentLine.MachineTranslation)))
                         {
-                            hasError = true;
-                            Cache.AddToError(currentLine);
-                            Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
-                            continue;
-                        }
+                            currentLine.GetTranslation();
 
-                        Cache.AddToMachineCache(currentLine);
-                    }
+                            //ignore faulty returns
+                            if (currentLine.HasRepeat || currentLine.HasError)
+                            {
+                                hasError = true;
+                                Cache.AddToError(currentLine);
+                                Tools.WriteLine($"This line returned a faulty translation and was placed in {Program.errorFile}", ConsoleColor.Red);
+                                continue;
+                            }
+
+                            Cache.AddToMachineCache(currentLine);
+                        }
+                    } 
+                    
                     else if (string.IsNullOrEmpty(currentLine.English))
                     {
                         Tools.WriteLine($"This line wasn't found in any cache and can't be translated since sugoi isn't running", ConsoleColor.Red);
@@ -117,7 +119,7 @@ namespace COM3D2.ScriptTranslationTool
 
                 if (Program.isExportBson)
                 {
-                    BsonDictionary.Add(Path.GetFileNameWithoutExtension(filename), Encoding.UTF8.GetBytes(concatStrings.ToString().Trim()));
+                    BsonDictionary.Add($"{Path.GetFileNameWithoutExtension(filename)}.txt",Encoding.UTF8.GetBytes(concatStrings.ToString().Trim()));
                 }
 
                 AlreadyParsedScripts.Add(filename);

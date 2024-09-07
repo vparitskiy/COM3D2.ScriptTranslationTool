@@ -140,7 +140,7 @@ namespace COM3D2.ScriptTranslationTool
     {
         private const string JpArcHistoryFile = "jp_archistory.json";
         private static Dictionary<string, long> _arcHistoryJp = new();
-        private static Dictionary<string, List<string>> _jpCache = new();
+        private static SortedDictionary<string, List<string>> _jpCache = new();
 
         internal static void ExtractJapanese(bool isSourceJpGame)
         {
@@ -264,6 +264,31 @@ namespace COM3D2.ScriptTranslationTool
                 Tools.WriteLine($"{scriptScannedNb} scripts", ConsoleColor.Green);
                 _arcHistoryJp.Add(arcName, arcFileSize);
                 Cache.SaveJson(_arcHistoryJp, arcHistoryJson);
+            }
+            
+            //adding loose script files
+            if (Directory.Exists(Program.japaneseScriptFolder))
+            {
+                var looseScripts = Directory.GetFiles(Program.japaneseScriptFolder, "*.txt*", SearchOption.AllDirectories);
+                if (looseScripts.Length != 0)
+                {
+                    Console.WriteLine($"Found {looseScripts.Length} loose Japanese scripts.");
+                    foreach (var script in looseScripts)
+                    {
+                        var scriptname = $"{Path.GetFileNameWithoutExtension(script)}.ks";
+                        var lines = File.ReadAllLines(script);
+
+                        if (_jpCache.TryGetValue(scriptname, out var value) && lines.Length != 0)
+                        {
+                            value.AddRange(lines.Select(l => l.Trim()));   
+                            _jpCache[scriptname] = _jpCache[scriptname].Distinct().ToList();
+                        }
+                        else if(lines.Length != 0)
+                        {
+                            _jpCache.Add(scriptname, lines.Select(l => l.Trim()).ToList());
+                        }
+                    }
+                }
             }
 
             Console.WriteLine("Saving Jp Cache.");
@@ -511,8 +536,16 @@ namespace COM3D2.ScriptTranslationTool
         {
             return (from KeyValuePair<string, ArcFileEntry> arcEntry in _arc.Files.Where(f => Path.GetExtension(f.Value.Name) == ".ks")
                 let pointer = arcEntry.Value.Pointer.Decompress() //Looks like all scripts are compressed, won't hurt if they aren't
-                let textData = Encoding.GetEncoding(932).GetString(pointer.Data) //And they are encoded as Shift JIS (codepage=932)
+                
+                //I need to check what encoding it's in since Kiss started to use TF8 in addition to ShiftJS
+                let textData = IsUnicode(pointer.Data) ? Encoding.UTF8.GetString(pointer.Data) : Encoding.GetEncoding(932).GetString(pointer.Data) 
                 select new ScriptFile(arcEntry.Value.Name, textData)).ToList();
+        }
+        
+        //Kiss and Unity use a BOM at the start of scripts to know if it's encoded in UTF8 (EF BB BF or as numbers 239 187 191)
+        private static bool IsUnicode(byte[] bytes)
+        {
+            return bytes is [239, 187, 191, ..];
         }
 
         internal ScriptFile GetScript(string fileName)
@@ -522,7 +555,7 @@ namespace COM3D2.ScriptTranslationTool
 
             var scripts = (from KeyValuePair<string, ArcFileEntry> arcEntry in _arc.Files.Where(f => Path.GetFileNameWithoutExtension(f.Value.Name) == fileName)
                 let pointer = arcEntry.Value.Pointer.Decompress()
-                let textData = Encoding.GetEncoding(932).GetString(pointer.Data)
+                let textData = IsUnicode(pointer.Data) ? Encoding.UTF8.GetString(pointer.Data) : Encoding.GetEncoding(932).GetString(pointer.Data) 
                 select new ScriptFile(arcEntry.Value.Name, textData)).ToArray();
 
             return scripts[0];

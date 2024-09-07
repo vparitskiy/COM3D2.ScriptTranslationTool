@@ -9,11 +9,39 @@ namespace COM3D2.ScriptTranslationTool
     {
         internal static void Process()
         {
-            Tools.MakeFolder(Program.i18NExUiFolder);
-            IEnumerable<string> csvs = Directory.EnumerateFiles(Program.japaneseUIFolder, "*.csv*", SearchOption.AllDirectories);
-            int csvCount = 1;
+            var tempCsvCache = new Dictionary<string,string>();
 
-            foreach (string csv in csvs)
+            //trying to load official .json
+            string[] jsonFiles =
+            {
+                "dynamic.json",
+                "dance_subtitle.json",
+                "parts.json",
+                "yotogi.json"
+            };
+
+            foreach (string jsonFile in jsonFiles)
+            {
+                var jsonPath = Path.Combine(Program.cacheFolder, jsonFile);
+
+                if (!File.Exists(jsonPath) || Program.isSafeExport) continue;
+                var strings = File.ReadAllLines(jsonPath);
+                for (var i = 0; i < strings.Length; i++)
+                {
+                    if (!strings[i].Contains("\"Languages\":")) continue;
+                    var jp = strings[i + 1].Replace("\"", "").Trim().Trim(',');
+                    var eng = strings[i + 2].Replace("\"", "").Trim().Trim(',');
+
+                    if (tempCsvCache.ContainsKey(jp) || string.IsNullOrEmpty(jp)) continue;
+                    tempCsvCache.Add(jp, eng);
+                    Console.WriteLine($"Loaded translation: {jp} {eng}");
+                }
+            }
+            Tools.MakeFolder(Program.i18NExUiFolder);
+            var csvs = Directory.EnumerateFiles(Program.japaneseUIFolder, "*.csv*", SearchOption.AllDirectories);
+            var csvCount = 1;
+
+            foreach (var csv in csvs)
             {
                 Tools.WriteLine($"\n-------- {Path.GetFileName(csv)} --------", ConsoleColor.Yellow);
 
@@ -21,22 +49,26 @@ namespace COM3D2.ScriptTranslationTool
                 List<CsvLine> csvLines = ParseCSV(csv);
 
                 //let's try to translate each line
-                for (int i = 0; i < csvLines.Count; i++)
+                for (var i = 0; i < csvLines.Count; i++)
                 {
                     Console.Title = $"Processing: line {i}/{csvLines.Count} from {csvCount}/{csvs.Count()} UI files";
 
                     var currentLine = csvLines[i];
 
                     //Some entries may be empty...
-                    if (String.IsNullOrWhiteSpace(currentLine.Japanese))
+                    if (string.IsNullOrWhiteSpace(currentLine.Japanese))
                         continue;
 
                     Console.Write(currentLine.Japanese);
                     Tools.Write(" => ", ConsoleColor.Yellow);
 
-                    // recover translation from caches
-                    // if (string.IsNullOrEmpty(currentLine.English))
-                    //    Cache.Get(currentLine);
+                    //retrieve from tempCache
+                    if (tempCsvCache.TryGetValue(currentLine.Japanese, out var value) && !Program.isSafeExport)
+                    {
+                        currentLine.OfficialTranslation = value;
+                        currentLine.Color = ConsoleColor.Green;
+                    }
+
 
                     //Translate if needed/possible
                     if (Program.isSugoiRunning && (string.IsNullOrEmpty(currentLine.English) ||
